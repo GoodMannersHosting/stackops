@@ -1,0 +1,64 @@
+### List of all Nodes
+# Full-Sized Systems
+active-viper-r1314.openstack.danmanners.com:
+  vars:
+    br_storage:
+      address: 172.20.32.17/20
+    br_lan:
+      address: 172.21.0.17/16
+wired-gnat-r1518.openstack.danmanners.com:
+  vars:
+    br_storage:
+      address: 172.20.32.16/20
+    br_lan:
+      address: 172.21.0.16/16
+wise-oryx-1922.openstack.danmanners.com:
+  vars:
+    br_storage:
+      address: 172.20.32.15/20
+    br_lan:
+      address: 172.21.0.15/16
+tidy-fowl-r24.openstack.danmanners.com:
+  vars:
+    br_storage:
+      address: 172.20.32.14/20
+    br_lan:
+      address: 172.21.0.14/16
+# Mini PCs
+first-dory-r31r.openstack.danmanners.com:
+  vars:
+    br_storage:
+      address: 172.20.32.12/20
+    br_lan:
+      address: 172.21.0.12/16
+cool-finch-r31l.openstack.danmanners.com:
+  vars:
+    br_storage:
+      address: 172.20.32.11/20
+    br_lan:
+      address: 172.21.0.11/16
+
+openstack:
+  vars:
+    ansible_user: ubuntu
+  children:
+    # Infrastructure Nodes
+    infra_nodes:
+      hosts:
+        active-viper-r1314.openstack.danmanners.com:
+        cool-finch-r31l.openstack.danmanners.com:
+        first-dory-r31r.openstack.danmanners.com:
+
+    # Storage Nodes running CEPH
+    storage_nodes:
+      hosts:
+        active-viper-r1314.openstack.danmanners.com:
+        wired-gnat-r1518.openstack.danmanners.com:
+        wise-oryx-1922.openstack.danmanners.com:
+
+    # Hypervisor Hosts for Nova Compute
+    nova_nodes:
+      hosts:
+        tidy-fowl-r24.openstack.danmanners.com:
+        first-dory-r31r.openstack.danmanners.com:
+        cool-finch-r31l.openstack.danmanners.com:
