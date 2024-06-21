@@ -5,9 +5,8 @@
   ignore_errors: true
 
 - name: Configure static IP for br-vxlan if deployed on metal
-  when: inventory_hostname in groups['network_nodes'] and not virtual
   ansible.builtin.command:
-    cmd: ip addr add 192.168.2.1/24 dev br-vxlan
+    cmd: ip addr add {{ hostvars['br_lan']['address'] }} dev br-vxlan
   ignore_errors: true
 
 - name: Bring up the br-vxlan interface

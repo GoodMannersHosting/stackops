@@ -40,8 +40,6 @@
               - hostname: time.nist.gov
                 iburst: true
                 pool: true
-        - name: Network | Setup Bridge Networks
-          ansible.builtin.include_tasks: tasks/br-mgmt.yaml
 
         - name: Network | Setup Storage Bridges
           when: "{{ansible_host}} in storage_nodes or compute_nodes "
@@ -51,6 +49,5 @@
           when: "{{ansible_host}} in network_nodes or compute_nodes "
           ansible.builtin.include_tasks: tasks/br-vxlan.yaml
 
-        - name: Network | Setup VLAN Bridges
-          when: "{{ansible_host}} in network_nodes or compute_nodes "
-          ansible.builtin.include_tasks: tasks/br-vlan.yaml
+        # - name: Network | Setup Bridge Networks
+        #   ansible.builtin.include_tasks: tasks/br-mgmt.yaml
