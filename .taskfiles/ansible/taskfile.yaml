@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: "3"
 
@@ -17,15 +16,15 @@ tasks:
   venv:
     desc: Set up Python virtual environment
     cmds:
-      - true && {{.PYTHON_BIN}} -m venv {{.ROOT_DIR}}/.venv
-      - .venv/bin/python3 -m pip install --upgrade pip setuptools wheel
-      - .venv/bin/python3 -m pip install --upgrade --requirement {{.ANSIBLE_DIR}}/requirements.txt
-      - .venv/bin/ansible-galaxy install --role-file "{{.ANSIBLE_DIR}}/requirements.yaml" --force
+    - true && {{.PYTHON_BIN}} -m venv {{.ROOT_DIR}}/.venv
+    - .venv/bin/python3 -m pip install --upgrade pip setuptools wheel
+    - .venv/bin/python3 -m pip install --upgrade --requirement {{.ANSIBLE_DIR}}/requirements.txt
+    # - .venv/bin/ansible-galaxy install --role-file "{{.ANSIBLE_DIR}}/requirements.yaml" --force
     sources:
-      - "{{.ANSIBLE_DIR}}/requirements.txt"
-      - "{{.ANSIBLE_DIR}}/requirements.yaml"
+    - "{{.ANSIBLE_DIR}}/requirements.txt"
+    # - "{{.ANSIBLE_DIR}}/requirements.yaml"
     generates:
-      - "{{.ROOT_DIR}}/.venv/pyvenv.cfg"
+    - "{{.ROOT_DIR}}/.venv/pyvenv.cfg"
 
   run:
     desc: Run an Ansible playbook for configuring
@@ -42,6 +41,6 @@ tasks:
     requires:
       vars: ["cluster", "playbook"]
     preconditions:
-      - test -d {{.ROOT_DIR}}/.venv
-      - test -f {{.ANSIBLE_DIR}}/{{.cluster}}/inventory/hosts.yaml
-      - test -f {{.ANSIBLE_DIR}}/{{.cluster}}/playbooks/{{.playbook}}.yaml
+    - test -d {{.ROOT_DIR}}/.venv
+    - test -f {{.ANSIBLE_DIR}}/{{.cluster}}/inventory/hosts.yaml
+    - test -f {{.ANSIBLE_DIR}}/{{.cluster}}/playbooks/{{.playbook}}.yaml
