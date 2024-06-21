@@ -12,9 +12,8 @@ env:
   ANSIBLE_VARS_ENABLED: "host_group_vars"
 
 tasks:
-
   venv:
-    desc: Set up Python virtual environment
+    desc: Set up the Python virtual environment.
     cmds:
     - true && {{.PYTHON_BIN}} -m venv {{.ROOT_DIR}}/.venv
     - .venv/bin/python3 -m pip install --upgrade pip setuptools wheel
@@ -27,7 +26,7 @@ tasks:
     - "{{.ROOT_DIR}}/.venv/pyvenv.cfg"
 
   run:
-    desc: Run an Ansible playbook for configuring
+    desc: Run the Ansible playbook for configuring.
     summary: |
       Args:
         cluster: Cluster to run command against (required)

@@ -3,15 +3,19 @@ all:
     ansible_user: ubuntu
     nameservers:
       addresses:
-        - 10.3.0.1
+      - 10.3.0.1
       search:
-        - maas
-        - openstack.danmanners.com
+      - maas
+      - openstack.danmanners.com
 
   children:
     full_sized_systems:
       hosts:
         active-viper-r1314.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.4/22
+            gateway: 172.20.0.1/22
+            nic: eno1
           br_storage:
             address: 172.20.32.17/20
             nic: enp5s0f1
@@ -20,6 +24,10 @@ all:
             nic: enp5s0f0
           virtual: false
         wired-gnat-r1518.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.5/22
+            gateway: 172.20.0.1/22
+            nic: enp60s0
           br_storage:
             address: 172.20.32.16/20
             nic: enp62s0f1
@@ -28,6 +36,10 @@ all:
             nic: enp62s0f0
           virtual: false
         wise-oryx-1922.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.7/22
+            gateway: 172.20.0.1/22
+            nic: enp43s0
           br_storage:
             address: 172.20.32.15/20
             nic: enp6s0f1
@@ -36,6 +48,10 @@ all:
             nic: enp6s0f0
           virtual: false
         tidy-fowl-r24.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.9/22
+            gateway: 172.20.0.1/22
+            nic: enp5s0
           br_storage:
             address: 172.20.32.14/20
             nic: enp1s0f1
@@ -47,6 +63,10 @@ all:
     mini_pcs:
       hosts:
         first-dory-r31r.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.2/22
+            gateway: 172.20.0.1/22
+            nic: enp1s0
           br_storage:
             address: 172.20.32.12/20
             nic: enp3s0
@@ -55,6 +75,10 @@ all:
             nic: enp2s0
           virtual: false
         cool-finch-r31l.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.3/22
+            gateway: 172.20.0.1/22
+            nic: enp1s0
           br_storage:
             address: 172.20.32.11/20
             nic: enp3s0
