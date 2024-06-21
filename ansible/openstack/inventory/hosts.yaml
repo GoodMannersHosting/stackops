@@ -1,64 +1,84 @@
-### List of all Nodes
-# Full-Sized Systems
-active-viper-r1314.openstack.danmanners.com:
-  vars:
-    br_storage:
-      address: 172.20.32.17/20
-    br_lan:
-      address: 172.21.0.17/16
-wired-gnat-r1518.openstack.danmanners.com:
-  vars:
-    br_storage:
-      address: 172.20.32.16/20
-    br_lan:
-      address: 172.21.0.16/16
-wise-oryx-1922.openstack.danmanners.com:
-  vars:
-    br_storage:
-      address: 172.20.32.15/20
-    br_lan:
-      address: 172.21.0.15/16
-tidy-fowl-r24.openstack.danmanners.com:
-  vars:
-    br_storage:
-      address: 172.20.32.14/20
-    br_lan:
-      address: 172.21.0.14/16
-# Mini PCs
-first-dory-r31r.openstack.danmanners.com:
-  vars:
-    br_storage:
-      address: 172.20.32.12/20
-    br_lan:
-      address: 172.21.0.12/16
-cool-finch-r31l.openstack.danmanners.com:
-  vars:
-    br_storage:
-      address: 172.20.32.11/20
-    br_lan:
-      address: 172.21.0.11/16
-
-openstack:
+all:
   vars:
     ansible_user: ubuntu
+    nameservers:
+      addresses:
+        - 10.3.0.1
+      search:
+        - maas
+        - openstack.danmanners.com
+
   children:
-    # Infrastructure Nodes
-    infra_nodes:
+    full_sized_systems:
       hosts:
         active-viper-r1314.openstack.danmanners.com:
-        cool-finch-r31l.openstack.danmanners.com:
-        first-dory-r31r.openstack.danmanners.com:
-
-    # Storage Nodes running CEPH
-    storage_nodes:
-      hosts:
-        active-viper-r1314.openstack.danmanners.com:
+          br_storage:
+            address: 172.20.32.17/20
+            nic: enp5s0f1
+          br_lan:
+            address: 172.21.0.17/16
+            nic: enp5s0f0
+          virtual: false
         wired-gnat-r1518.openstack.danmanners.com:
+          br_storage:
+            address: 172.20.32.16/20
+            nic: enp62s0f1
+          br_lan:
+            address: 172.21.0.16/16
+            nic: enp62s0f0
+          virtual: false
         wise-oryx-1922.openstack.danmanners.com:
-
-    # Hypervisor Hosts for Nova Compute
-    nova_nodes:
-      hosts:
+          br_storage:
+            address: 172.20.32.15/20
+            nic: enp6s0f1
+          br_lan:
+            address: 172.21.0.15/16
+            nic: enp6s0f0
+          virtual: false
         tidy-fowl-r24.openstack.danmanners.com:
+          br_storage:
+            address: 172.20.32.14/20
+            nic: enp1s0f1
+          br_lan:
+            address: 172.21.0.14/16
+            nic: enp1s0f0
+          virtual: false
+
+    mini_pcs:
+      hosts:
         first-dory-r31r.openstack.danmanners.com:
+          br_storage:
+            address: 172.20.32.12/20
+            nic: enp3s0
+          br_lan:
+            address: 172.21.0.12/16
+            nic: enp2s0
+          virtual: false
         cool-finch-r31l.openstack.danmanners.com:
+          br_storage:
+            address: 172.20.32.11/20
+            nic: enp3s0
+          br_lan:
+            address: 172.21.0.11/16
+            nic: enp2s0
+          virtual: false
+
+    openstack:
+      children:
+        infra_nodes:
+          hosts:
+            active-viper-r1314.openstack.danmanners.com:
+            cool-finch-r31l.openstack.danmanners.com:
+            first-dory-r31r.openstack.danmanners.com:
+
+        storage_nodes:
+          hosts:
+            active-viper-r1314.openstack.danmanners.com:
+            wired-gnat-r1518.openstack.danmanners.com:
+            wise-oryx-1922.openstack.danmanners.com:
+
+        nova_nodes:
+          hosts:
+            tidy-fowl-r24.openstack.danmanners.com:
+            first-dory-r31r.openstack.danmanners.com:
+            cool-finch-r31l.openstack.danmanners.com:

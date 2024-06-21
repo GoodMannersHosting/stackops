@@ -41,13 +41,17 @@
                 iburst: true
                 pool: true
 
-        - name: Network | Setup Storage Bridges
-          when: "{{ansible_host}} in storage_nodes or compute_nodes "
-          ansible.builtin.include_tasks: tasks/br-storage.yaml
+        - name: Network | Persist Netplan configuration
+          when: inventory_hostname in groups['storage_nodes'] or inventory_hostname in groups['infra_nodes'] or inventory_hostname in groups['nova_nodes'] and not hostvars[inventory_hostname]['virtual']
+          ansible.builtin.template:
+            src: templates/99-bridge-networks.yaml.j2
+            dest: /etc/netplan/99-netplan-config.yaml
+            mode: '0600'
+          changed_when: true
 
-        - name: Network | Setup VXLAN Bridges
-          when: "{{ansible_host}} in network_nodes or compute_nodes "
-          ansible.builtin.include_tasks: tasks/br-vxlan.yaml
-
-        # - name: Network | Setup Bridge Networks
-        #   ansible.builtin.include_tasks: tasks/br-mgmt.yaml
+        - name: Network | Apply netplan configuration
+          ansible.builtin.command:
+            cmd: netplan apply
+          register: result_netplan
+          failed_when: result_netplan.rc != 0
+          changed_when: result_netplan.rc == 0

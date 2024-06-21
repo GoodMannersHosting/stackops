@@ -36,7 +36,7 @@ tasks:
     deps: ["venv"]
     cmd: |
       .venv/bin/ansible-playbook \
-        --inventory {{.ANSIBLE_DIR}}/{{.cluster}}/inventory/hosts.yaml -K \
+        --inventory {{.ANSIBLE_DIR}}/{{.cluster}}/inventory/hosts.yaml \
         {{.ANSIBLE_DIR}}/{{.cluster}}/playbooks/{{.playbook}}.yaml {{.CLI_ARGS}}
     requires:
       vars: ["cluster", "playbook"]

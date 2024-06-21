@@ -1,0 +1,7 @@
+packages_install:
+  - bridge-utils
+  - debootstrap
+  - openssh-server
+  - tcpdump
+  - vlan
+  - python3
