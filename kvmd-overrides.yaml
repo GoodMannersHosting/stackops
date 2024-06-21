@@ -1,0 +1,190 @@
+# /etc/kvmd/overrides.yaml
+kvmd:
+  gpio:
+    drivers:
+      tes:
+        type: tesmart
+        host: 10.3.0.9
+        port: 5000
+      reboot:
+        type: cmd
+        cmd: ["/usr/bin/sudo", "reboot"]
+      restart_service:
+        type: cmd
+        cmd: ["/usr/bin/sudo", "systemctl", "restart", "kvmd"]
+    scheme:
+      dev0_led:
+        driver: tes
+        pin: 0
+        mode: input
+      dev0_btn:
+        driver: tes
+        pin: 0
+        mode: output
+        switch: false
+      dev1_led:
+        driver: tes
+        pin: 1
+        mode: input
+      dev1_btn:
+        driver: tes
+        pin: 1
+        mode: output
+        switch: false
+      dev2_led:
+        driver: tes
+        pin: 2
+        mode: input
+      dev2_btn:
+        driver: tes
+        pin: 2
+        mode: output
+        switch: false
+      dev3_led:
+        driver: tes
+        pin: 3
+        mode: input
+      dev3_btn:
+        driver: tes
+        pin: 3
+        mode: output
+        switch: false
+      dev4_led:
+        driver: tes
+        pin: 4
+        mode: input
+      dev4_btn:
+        driver: tes
+        pin: 4
+        mode: output
+        switch: false
+      dev5_led:
+        driver: tes
+        pin: 5
+        mode: input
+      dev5_btn:
+        driver: tes
+        pin: 5
+        mode: output
+        switch: false
+      dev6_led:
+        driver: tes
+        pin: 6
+        mode: input
+      dev6_btn:
+        driver: tes
+        pin: 6
+        mode: output
+        switch: false
+      dev7_led:
+        driver: tes
+        pin: 7
+        mode: input
+      dev7_btn:
+        driver: tes
+        pin: 7
+        mode: output
+        switch: false
+      dev8_led:
+        driver: tes
+        pin: 8
+        mode: input
+      dev8_btn:
+        driver: tes
+        pin: 8
+        mode: output
+        switch: false
+      dev9_led:
+        driver: tes
+        pin: 9
+        mode: input
+      dev9_btn:
+        driver: tes
+        pin: 9
+        mode: output
+        switch: false
+      dev10_led:
+        driver: tes
+        pin: 10
+        mode: input
+      dev10_btn:
+        driver: tes
+        pin: 10
+        mode: output
+        switch: false
+      dev11_led:
+        driver: tes
+        pin: 11
+        mode: input
+      dev11_btn:
+        driver: tes
+        pin: 11
+        mode: output
+        switch: false
+      dev12_led:
+        driver: tes
+        pin: 12
+        mode: input
+      dev12_btn:
+        driver: tes
+        pin: 12
+        mode: output
+        switch: false
+      dev13_led:
+        driver: tes
+        pin: 13
+        mode: input
+      dev13_btn:
+        driver: tes
+        pin: 13
+        mode: output
+        switch: false
+      dev14_led:
+        driver: tes
+        pin: 14
+        mode: input
+      dev14_btn:
+        driver: tes
+        pin: 14
+        mode: output
+        switch: false
+      dev15_led:
+        driver: tes
+        pin: 15
+        mode: input
+      dev15_btn:
+        driver: tes
+        pin: 15
+        mode: output
+        switch: false
+      reboot_button:
+        driver: reboot
+        pin: 0
+        mode: output
+        switch: false
+      restart_service_button:
+        driver: restart_service
+        pin: 0
+        mode: output
+        switch: false
+    view:
+      header:
+        title: Devices
+      table:
+      - ["#pikvm", "pikvm_led|green", "restart_service_button|confirm|Service", "reboot_button|confirm|Reboot"]
+      - ["#0", "dev0_led", "dev0_btn | KVM"]
+      - ["#1", "dev1_led", "dev1_btn | KVM"]
+      - ["#2", "dev2_led", "dev2_btn | KVM"]
+      - ["#3", "dev3_led", "dev3_btn | KVM"]
+      - ["#4", "dev4_led", "dev4_btn | KVM"]
+      - ["#5", "dev5_led", "dev5_btn | KVM"]
+      - ["#6", "dev6_led", "dev6_btn | KVM"]
+      - ["#7", "dev7_led", "dev7_btn | KVM"]
+      - ["#8", "dev8_led", "dev8_btn | KVM"]
+      - ["#9", "dev9_led", "dev9_btn | KVM"]
+      - ["#10", "dev10_led", "dev10_btn | KVM"]
+      - ["#11", "dev11_led", "dev11_btn | KVM"]
+      - ["#12", "dev12_led", "dev12_btn | KVM"]
+      - ["#13", "dev13_led", "dev13_btn | KVM"]
+      - ["#14", "dev14_led", "dev14_btn | KVM"]
+      - ["#15", "dev15_led", "dev15_btn | KVM"]
