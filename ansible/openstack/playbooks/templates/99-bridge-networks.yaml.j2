@@ -1,38 +1,13 @@
 network:
   version: 2
   renderer: networkd
-  ethernets:
-    {{ hostvars[inventory_hostname]['br_mgmt']['nic'] }}: {}
-{% if hostvars[inventory_hostname]['br_lan']['nic'] %}
-    {{ hostvars[inventory_hostname]['br_lan']['nic'] }}: {}
-{% endif %}
-{% if hostvars[inventory_hostname]['br_storage']['nic'] %}
-    {{ hostvars[inventory_hostname]['br_storage']['nic'] }}: {}
-{% endif %}
   bridges:
-    br-mgmt:
-      interfaces:
-        - {{ hostvars[inventory_hostname]['br_mgmt']['nic'] | default("") }}
-      addresses:
-        - {{ hostvars[inventory_hostname]['br_mgmt']['address'] | default("") }}
-      parameters:
-        stp: false
-        forward-delay: 0
-      dhcp4: no
-      nameservers:
-        addresses:
 {% if inventory_hostname in groups['storage_nodes'] or inventory_hostname in groups['nova_nodes'] %}
-      routes:
-        - to: default
-          via: {{ hostvars[inventory_hostname]['br_mgmt']['gateway'] }}
     br-storage:
       interfaces:
         - {{ hostvars[inventory_hostname]['br_storage']['nic'] | default("") }}
       addresses:
         - {{ hostvars[inventory_hostname]['br_storage']['address'] | default("") }}
-      parameters:
-        stp: false
-        forward-delay: 0
       dhcp4: no
       nameservers:
         addresses:
@@ -45,14 +20,11 @@ network:
 {% endfor %}
 {% endif %}
 {% if inventory_hostname in groups['infra_nodes'] or inventory_hostname in groups['nova_nodes'] %}
-    br-lan:
+    br-vxlan:
       interfaces:
-        - {{ hostvars[inventory_hostname]['br_lan']['nic'] | default("") }}
+        - {{ hostvars[inventory_hostname]['br_vxlan']['nic'] | default("") }}
       addresses:
-        - {{ hostvars[inventory_hostname]['br_lan']['address'] | default("") }}
-      parameters:
-        stp: false
-        forward-delay: 0
+        - {{ hostvars[inventory_hostname]['br_vxlan']['address'] | default("") }}
       dhcp4: no
       nameservers:
         addresses:
@@ -66,6 +38,3 @@ network:
 {% endif %}
     br-vlan:
       dhcp4: no
-      parameters:
-        stp: false
-        forward-delay: 0

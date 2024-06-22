@@ -45,7 +45,7 @@
           when: inventory_hostname in groups['storage_nodes'] or inventory_hostname in groups['infra_nodes'] or inventory_hostname in groups['nova_nodes'] and not hostvars[inventory_hostname]['virtual']
           ansible.builtin.template:
             src: templates/99-bridge-networks.yaml.j2
-            dest: /etc/netplan/99-netplan-config.yaml
+            dest: /etc/netplan/99-bridges.yaml
             mode: '0600'
           changed_when: true
 

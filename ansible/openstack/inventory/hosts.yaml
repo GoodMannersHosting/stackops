@@ -18,22 +18,26 @@ all:
             nic: eno1
           br_storage:
             address: 172.20.32.17/20
+            gateway: 172.20.32.1/20
             nic: enp5s0f1
-          br_lan:
-            address: 172.21.0.17/16
+          br_vxlan:
+            address: 172.22.0.17/16
+            gateway: 172.20.32.1/20
             nic: enp5s0f0
           virtual: false
         wired-gnat-r1518.openstack.danmanners.com:
           br_mgmt:
             address: 172.20.2.5/22
             gateway: 172.20.0.1/22
-            nic: enp60s0
+            nic: enp4s0
           br_storage:
             address: 172.20.32.16/20
-            nic: enp62s0f1
-          br_lan:
-            address: 172.21.0.16/16
-            nic: enp62s0f0
+            gateway: 172.20.32.1/20
+            nic: enp12s0f1
+          br_vxlan:
+            address: 172.22.0.16/16
+            gateway: 172.20.32.1/20
+            nic: enp12s0f0
           virtual: false
         wise-oryx-1922.openstack.danmanners.com:
           br_mgmt:
@@ -42,9 +46,11 @@ all:
             nic: enp43s0
           br_storage:
             address: 172.20.32.15/20
+            gateway: 172.20.32.1/20
             nic: enp6s0f1
-          br_lan:
-            address: 172.21.0.15/16
+          br_vxlan:
+            address: 172.22.0.15/16
+            gateway: 172.20.32.1/20
             nic: enp6s0f0
           virtual: false
         tidy-fowl-r24.openstack.danmanners.com:
@@ -54,9 +60,11 @@ all:
             nic: enp5s0
           br_storage:
             address: 172.20.32.14/20
+            gateway: 172.20.32.1/20
             nic: enp1s0f1
-          br_lan:
-            address: 172.21.0.14/16
+          br_vxlan:
+            address: 172.22.0.14/16
+            gateway: 172.20.32.1/20
             nic: enp1s0f0
           virtual: false
 
@@ -69,9 +77,11 @@ all:
             nic: enp1s0
           br_storage:
             address: 172.20.32.12/20
+            gateway: 172.20.32.1/20
             nic: enp3s0
-          br_lan:
-            address: 172.21.0.12/16
+          br_vxlan:
+            address: 172.22.0.12/16
+            gateway: 172.20.32.1/20
             nic: enp2s0
           virtual: false
         cool-finch-r31l.openstack.danmanners.com:
@@ -81,9 +91,11 @@ all:
             nic: enp1s0
           br_storage:
             address: 172.20.32.11/20
+            gateway: 172.20.32.1/20
             nic: enp3s0
-          br_lan:
-            address: 172.21.0.11/16
+          br_vxlan:
+            address: 172.22.0.11/16
+            gateway: 172.22.0.1/16
             nic: enp2s0
           virtual: false
 
@@ -104,5 +116,5 @@ all:
         nova_nodes:
           hosts:
             tidy-fowl-r24.openstack.danmanners.com:
-            first-dory-r31r.openstack.danmanners.com:
-            cool-finch-r31l.openstack.danmanners.com:
+            wired-gnat-r1518.openstack.danmanners.com:
+            wise-oryx-1922.openstack.danmanners.com:
