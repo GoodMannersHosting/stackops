@@ -3,7 +3,7 @@ network:
   renderer: networkd
   bridges:
 {% if inventory_hostname in groups['storage_nodes'] or inventory_hostname in groups['nova_nodes'] %}
-    br-storage:
+    br_storage:
       interfaces:
         - {{ hostvars[inventory_hostname]['br_storage']['nic'] | default("") }}
       addresses:
@@ -20,7 +20,7 @@ network:
 {% endfor %}
 {% endif %}
 {% if inventory_hostname in groups['infra_nodes'] or inventory_hostname in groups['nova_nodes'] %}
-    br-vxlan:
+    br_vxlan:
       interfaces:
         - {{ hostvars[inventory_hostname]['br_vxlan']['nic'] | default("") }}
       addresses:
@@ -36,5 +36,5 @@ network:
           - {{ domain }}
 {% endfor %}
 {% endif %}
-    br-vlan:
+    br_vlan:
       dhcp4: no
