@@ -1,9 +1,9 @@
 # OpenStack @ Home
 
-> ![Note]
+> [!Note]
 > First and foremost, I'd like to thank @coolguy1771 who made the entire deployment possible.
 
-> ![CAUTION]
+> [!CAUTION]
 > This project and repo is an emormous WIP and is not complete!!
 
 ## Introduction
