@@ -29,6 +29,9 @@ active-viper-r1314.openstack.danmanners.com
 #compute01 neutron_external_interface=eth0 api_interface=em1 tunnel_interface=em1
 
 [storage]
+active-viper-r1314.openstack.danmanners.com
+cool-finch-r31l.openstack.danmanners.com
+first-dory-r31r.openstack.danmanners.com
 active-viper-r1314.openstack.danmanners.com 
 wise-oryx-1922.openstack.danmanners.com
 wired-gnat-r1518.openstack.danmanners.com
