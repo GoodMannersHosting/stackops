@@ -97,9 +97,9 @@ kolla_container_engine: podman
 ################
 
 # Custom docker registry settings:
-#docker_registry:
+# docker_registry: "mini-maas.homelab.danmanners.com:5000"
 # Please read the docs carefully before applying docker_registry_insecure.
-#docker_registry_insecure: "no"
+# docker_registry_insecure: "yes"
 #docker_registry_username:
 # docker_registry_password is set in the passwords.yml file.
 
@@ -110,7 +110,7 @@ kolla_container_engine: podman
 #docker_client_timeout: 120
 
 #docker_configure_for_zun: "no"
-#containerd_configure_for_zun: "no"
+containerd_configure_for_zun: "yes"
 #containerd_grpc_gid: 42463
 
 ###################
@@ -141,13 +141,13 @@ network_interface: "br_vxlan"
 #api_interface: "{{ network_interface }}"
 #swift_storage_interface: "{{ network_interface }}"
 #swift_replication_interface: "{{ swift_storage_interface }}"
-#tunnel_interface: "{{ network_interface }}"
+tunnel_interface: "br_vxlan"
 #dns_interface: "{{ network_interface }}"
-octavia_network_interface: "br-mgmt"
+octavia_network_interface: "{{ api_interface }}"
 
 # Configure the address family (AF) per network.
 # Valid options are [ ipv4, ipv6 ]
-#network_address_family: "ipv4"
+network_address_family: "ipv4"
 #api_address_family: "{{ network_address_family }}"
 #storage_address_family: "{{ network_address_family }}"
 #swift_storage_address_family: "{{ storage_address_family }}"
@@ -162,7 +162,7 @@ octavia_network_interface: "br-mgmt"
 # though an IP address can exist on this interface, it will be unusable in most
 # configurations. It is recommended this interface not be configured with any IP
 # addresses for that reason.
-neutron_external_interface: "br_vlan"
+neutron_external_interface: "neutron"
 
 # Valid options are [ openvswitch, ovn, linuxbridge, vmware_nsxv, vmware_nsxv3, vmware_nsxp, vmware_dvs ]
 # if vmware_nsxv3 or vmware_nsxp is selected, enable_openvswitch MUST be set to "no" (default is yes)
@@ -329,9 +329,9 @@ enable_barbican: "yes"
 #enable_ceilometer: "no"
 #enable_ceilometer_ipmi: "no"
 #enable_cells: "no"
-enable_central_logging: "yes"
-opensearch_soft_retention_period_days: 2
-opensearch_hard_retention_period_days: 4
+# enable_central_logging: "no"
+# opensearch_soft_retention_period_days: 2
+# opensearch_hard_retention_period_days: 4
 #enable_ceph_rgw: "no"
 #enable_ceph_rgw_loadbalancer: "{{ enable_ceph_rgw | bool }}"
 enable_cinder: "yes"
@@ -364,7 +364,7 @@ enable_horizon_designate: "{{ enable_designate | bool }}"
 #enable_horizon_fwaas: "{{ enable_neutron_fwaas | bool }}"
 enable_horizon_heat: "{{ enable_heat | bool }}"
 #enable_horizon_ironic: "{{ enable_ironic | bool }}"
-#enable_horizon_magnum: "{{ enable_magnum | bool }}"
+enable_horizon_magnum: "{{ enable_magnum | bool }}"
 #enable_horizon_manila: "{{ enable_manila | bool }}"
 #enable_horizon_masakari: "{{ enable_masakari | bool }}"
 #enable_horizon_mistral: "{{ enable_mistral | bool }}"
@@ -379,8 +379,8 @@ enable_horizon_zun: "{{ enable_zun | bool }}"
 #enable_ironic_neutron_agent: "{{ enable_neutron | bool and enable_ironic | bool }}"
 #enable_ironic_prometheus_exporter: "{{ enable_ironic | bool and enable_prometheus | bool }}"
 #enable_iscsid: "{{ enable_cinder | bool and enable_cinder_backend_iscsi | bool }}"
-#enable_kuryr: "yes"
-#enable_magnum: "no"
+enable_kuryr: "yes"
+enable_magnum: "yes"
 #enable_manila: "no"
 #enable_manila_backend_generic: "no"
 #enable_manila_backend_hnas: "no"
@@ -421,7 +421,7 @@ enable_placement: "{{ enable_nova | bool or enable_zun | bool }}"
 #enable_prometheus: "no"
 #enable_proxysql: "no"
 enable_redis: "yes"
-enable_skyline: "no"
+enable_skyline: "yes"
 #enable_swift: "no"
 #enable_swift_s3api: "no"
 #enable_tacker: "no"
@@ -430,7 +430,7 @@ enable_trove: "yes"
 #enable_trove_singletenant: "no"
 #enable_venus: "no"
 #enable_watcher: "no"
-#enable_zun: "yes"
+enable_zun: "yes"
 
 #############
 # S3 options
@@ -500,7 +500,6 @@ external_ceph_cephx_enabled: "yes"
 #############################
 
 #keystone_admin_user: "admin"
-
 #keystone_admin_project: "admin"
 
 # Interval to rotate fernet keys by (in seconds). Must be an interval of
@@ -550,7 +549,7 @@ glance_logging_debug: "yes"
 # Barbican options
 ##################
 # Valid options are [ simple_crypto, p11_crypto ]
-#barbican_crypto_plugin: "simple_crypto"
+barbican_crypto_plugin: "simple_crypto"
 #barbican_library_path: "/usr/lib/libCryptoki2_64.so"
 
 #################
@@ -609,7 +608,7 @@ designate_coordination_backend: "{{ 'redis' if enable_redis|bool else '' }}"
 ########################
 # Trove - Compute Options
 ########################
-trove_logging_debug: "yes"
+trove_logging_debug: "no"
 
 ########################
 # Nova - Compute Options
@@ -818,7 +817,6 @@ neutron_ovn_distributed_fip: "yes"
 # NOTE: if you upgrade from Ussuri, you must set `octavia_auto_configure` to `no`
 # and keep your other Octavia config like before.
 octavia_auto_configure: yes
-
 octavia_certs_country: US
 octavia_certs_state: North Carolina
 octavia_certs_organization: Dan Manners Homelab OpenStack
@@ -835,12 +833,12 @@ octavia_certs_organizational_unit: Octavia
 # - ephemeral (optional)
 # - swap (optional)
 # - extra_specs (optional)
-#octavia_amp_flavor:
-#  name: "amphora"
-#  is_public: no
-#  vcpus: 1
-#  ram: 1024
-#  disk: 5
+octavia_amp_flavor:
+  name: "amphora"
+  is_public: yes
+  vcpus: 1
+  ram: 1024
+  disk: 5
 
 # Octavia security groups. lb-mgmt-sec-grp is for amphorae.
 #octavia_amp_security_groups:
@@ -886,7 +884,7 @@ octavia_certs_organizational_unit: Octavia
 #    enable_dhcp: yes
 
 # Octavia management network subnet CIDR.
-#octavia_amp_network_cidr: 10.1.0.0/24
+octavia_amp_network_cidr: 172.22.0.0/16
 
 #octavia_amp_image_tag: "amphora"
 
@@ -923,8 +921,7 @@ neutron_dns_domain: "internal.openstack.danmanners.com."
 # Ceph Enablement for Backends
 #############
 ceph_version: "reef"
-glance_backend_ceph: "yes"
-#zun_configure_for_cinder_ceph: "yes"
+zun_configure_for_cinder_ceph: "yes"
 
 cinder_logging_debug: "yes"
 placement_logging_debug: "yes"

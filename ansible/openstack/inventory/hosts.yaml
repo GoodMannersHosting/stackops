@@ -11,51 +11,9 @@ all:
   children:
     full_sized_systems:
       hosts:
-        active-viper-r1314.openstack.danmanners.com:
-          br_mgmt:
-            address: 172.20.2.4/22
-            gateway: 172.20.0.1/22
-            nic: eno1
-          br_storage:
-            address: 172.20.32.17/20
-            gateway: 172.20.32.1/20
-            nic: enp5s0f1
-          br_vxlan:
-            address: 172.22.0.17/16
-            gateway: 172.20.32.1/20
-            nic: enp5s0f0
-          virtual: false
-        wired-gnat-r1518.openstack.danmanners.com:
-          br_mgmt:
-            address: 172.20.2.5/22
-            gateway: 172.20.0.1/22
-            nic: enp4s0
-          br_storage:
-            address: 172.20.32.16/20
-            gateway: 172.20.32.1/20
-            nic: enp12s0f1
-          br_vxlan:
-            address: 172.22.0.16/16
-            gateway: 172.20.32.1/20
-            nic: enp12s0f0
-          virtual: false
-        wise-oryx-1922.openstack.danmanners.com:
-          br_mgmt:
-            address: 172.20.2.7/22
-            gateway: 172.20.0.1/22
-            nic: enp43s0
-          br_storage:
-            address: 172.20.32.15/20
-            gateway: 172.20.32.1/20
-            nic: enp6s0f1
-          br_vxlan:
-            address: 172.22.0.15/16
-            gateway: 172.20.32.1/20
-            nic: enp6s0f0
-          virtual: false
         tidy-fowl-r24.openstack.danmanners.com:
           br_mgmt:
-            address: 172.20.2.9/22
+            address: 172.20.2.4/22
             gateway: 172.20.0.1/22
             nic: enp5s0
           br_storage:
@@ -64,29 +22,57 @@ all:
             nic: enp1s0f1
           br_vxlan:
             address: 172.22.0.14/16
-            gateway: 172.20.32.1/20
+            gateway: 172.22.0.1/16
             nic: enp1s0f0
+          virtual: false
+        wise-oryx-1922.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.5/22
+            gateway: 172.20.0.1/22
+            nic: enp43s0
+          br_storage:
+            address: 172.20.32.15/20
+            gateway: 172.20.32.1/20
+            nic: enp6s0f1
+          br_vxlan:
+            address: 172.22.0.15/16
+            gateway: 172.22.0.1/16
+            nic: enp6s0f0
+          virtual: false
+        wired-gnat-r1518.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.6/22
+            gateway: 172.20.0.1/22
+            nic: enp4s0
+          br_storage:
+            address: 172.20.32.16/20
+            gateway: 172.20.32.1/20
+            nic: enp12s0f1
+          br_vxlan:
+            address: 172.22.0.16/16
+            gateway: 172.22.0.1/16
+            nic: enp12s0f0
+          virtual: false
+        active-viper-r1314.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.7/22
+            gateway: 172.20.0.1/22
+            nic: eno1
+          br_storage:
+            address: 172.20.32.17/20
+            gateway: 172.20.32.1/20
+            nic: enp5s0f1
+          br_vxlan:
+            address: 172.22.0.17/16
+            gateway: 172.22.0.1/16
+            nic: enp5s0f0
           virtual: false
 
     mini_pcs:
       hosts:
-        first-dory-r31r.openstack.danmanners.com:
-          br_mgmt:
-            address: 172.20.2.2/22
-            gateway: 172.20.0.1/22
-            nic: enp1s0
-          br_storage:
-            address: 172.20.32.12/20
-            gateway: 172.20.32.1/20
-            nic: enp3s0
-          br_vxlan:
-            address: 172.22.0.12/16
-            gateway: 172.20.32.1/20
-            nic: enp2s0
-          virtual: false
         cool-finch-r31l.openstack.danmanners.com:
           br_mgmt:
-            address: 172.20.2.3/22
+            address: 172.20.2.1/22
             gateway: 172.20.0.1/22
             nic: enp1s0
           br_storage:
@@ -98,23 +84,52 @@ all:
             gateway: 172.22.0.1/16
             nic: enp2s0
           virtual: false
+        first-dory-r31r.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.2/22
+            gateway: 172.20.0.1/22
+            nic: enp1s0
+          br_storage:
+            address: 172.20.32.12/20
+            gateway: 172.20.32.1/20
+            nic: enp3s0
+          br_vxlan:
+            address: 172.22.0.12/16
+            gateway: 172.22.0.1/16
+            nic: enp2s0
+          virtual: false
+        driven-swine-r29.openstack.danmanners.com:
+          br_mgmt:
+            address: 172.20.2.3/22
+            gateway: 172.20.0.1/22
+            nic: enp1s0
+          br_storage:
+            address: 172.20.32.13/20
+            gateway: 172.20.32.1/20
+            nic: enp3s0
+          br_vxlan:
+            address: 172.22.0.13/16
+            gateway: 172.22.0.1/16
+            nic: enp2s0
+          virtual: false
 
     openstack:
       children:
         infra_nodes:
           hosts:
-            active-viper-r1314.openstack.danmanners.com:
             cool-finch-r31l.openstack.danmanners.com:
             first-dory-r31r.openstack.danmanners.com:
+            driven-swine-r29.openstack.danmanners.com:
 
         storage_nodes:
           hosts:
-            active-viper-r1314.openstack.danmanners.com:
-            wired-gnat-r1518.openstack.danmanners.com:
             wise-oryx-1922.openstack.danmanners.com:
+            wired-gnat-r1518.openstack.danmanners.com:
+            active-viper-r1314.openstack.danmanners.com:
 
         nova_nodes:
           hosts:
             tidy-fowl-r24.openstack.danmanners.com:
-            wired-gnat-r1518.openstack.danmanners.com:
             wise-oryx-1922.openstack.danmanners.com:
+            wired-gnat-r1518.openstack.danmanners.com:
+            active-viper-r1314.openstack.danmanners.com:

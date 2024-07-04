@@ -2,9 +2,9 @@
 # additional groups are for more control of the environment.
 [control]
 # These hostname must be resolvable from your deployment host
-active-viper-r1314.openstack.danmanners.com
 cool-finch-r31l.openstack.danmanners.com
 first-dory-r31r.openstack.danmanners.com
+driven-swine-r29.openstack.danmanners.com
 
 # The above can also be specified as follows:
 #control[01:03]     ansible_user=kolla
@@ -14,11 +14,14 @@ first-dory-r31r.openstack.danmanners.com
 [network]
 cool-finch-r31l.openstack.danmanners.com
 first-dory-r31r.openstack.danmanners.com
+driven-swine-r29.openstack.danmanners.com
+wise-oryx-1922.openstack.danmanners.com
 
 [compute]
 wired-gnat-r1518.openstack.danmanners.com
 wise-oryx-1922.openstack.danmanners.com
 tidy-fowl-r24.openstack.danmanners.com
+active-viper-r1314.openstack.danmanners.com
 
 [monitoring]
 active-viper-r1314.openstack.danmanners.com
@@ -30,11 +33,8 @@ active-viper-r1314.openstack.danmanners.com
 
 [storage]
 active-viper-r1314.openstack.danmanners.com
-cool-finch-r31l.openstack.danmanners.com
-first-dory-r31r.openstack.danmanners.com
-active-viper-r1314.openstack.danmanners.com 
-wise-oryx-1922.openstack.danmanners.com
 wired-gnat-r1518.openstack.danmanners.com
+wise-oryx-1922.openstack.danmanners.com
 
 [deployment]
 localhost       ansible_connection=local

@@ -38,3 +38,7 @@ network:
 {% endif %}
     br_vlan:
       dhcp4: no
+  vlans:
+    neutron:
+      id: 501
+      link: {{ hostvars[inventory_hostname]['br_mgmt']['nic'] }}
