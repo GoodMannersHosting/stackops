@@ -34,7 +34,10 @@ chmod +x cephadm
 
 # Add the Ceph Reef repository and install the cephadm package
 sudo ./cephadm add-repo --release reef
-sudo ./cephadm install
+sudo ./cephadm install ceph
+
+# Bootstrap the first ceph node where you are running these commands
+sudo cephadm bootstrap --mon-ip 172.20.32.17 # Replace this IP with yours if different
 ```
 
 Once cephadm is installed, grab the `/etc/ceph/ceph.conf` file from the first Ceph node. This will be used to configure the Ceph backend for OpenStack config files.
@@ -45,8 +48,7 @@ Additionally, you'll need to add the `/etc/ceph/ceph.pub` key to the `~/.ssh/aut
 > If you don't do this, cephadm will not be able to communicate with the Ceph nodes and commands will fail.
 
 ```bash
-# Bootstrap the first ceph node where you are running these commands
-sudo cephadm bootstrap --mon-ip 172.20.32.17 # Replace this IP with yours if different
+# Add the second and third nodes
 sudo ceph orch host add wise-oryx-1922 172.20.32.15 --labels _admin
 sudo ceph orch host add wired-gnat-r1518 172.20.32.16 --labels _admin
 
