@@ -62,12 +62,14 @@ sudo ceph osd pool create volumes
 sudo ceph osd pool create images
 sudo ceph osd pool create backups
 sudo ceph osd pool create vms
+sudo ceph osd pool create ephemeral-vms
 
 # Create the necessary RBDs for Ceph for OpenStack
 sudo rbd pool init volumes
 sudo rbd pool init images
 sudo rbd pool init backups
 sudo rbd pool init vms
+sudo rbd pool init ephemeral-vms
 
 # Create the necessary Ceph users for OpenStack
 ## Glance
@@ -88,6 +90,12 @@ mon 'profile rbd' \
 osd 'profile rbd pool=backups' \
 mgr 'profile rbd pool=backups'
 
+## Zun VMs
+sudo ceph auth get-or-create client.zun \
+mon 'profile rbd' \
+osd 'profile rbd pool=ephemeral-vms' \
+mgr 'profile rbd pool=ephemeral-vms'
+
 # Finally, Tune the memory settings so ceph cannot consume all host memory
 sudo ceph config set mgr mgr/cephadm/autotune_memory_target_ratio 0.25
 sudo ceph config set osd osd_memory_target_autotune true
@@ -98,27 +106,32 @@ We'll need to copy/paste all of the above commands into the terminal of the firs
 Once you can see the keys generated through the `auth get-or-create` commands, make sure you copy them to the appropriate configuration files in the OpenStack deployment.
 
 ```bash
-/etc/kolla/config/
+config/
 ├── cinder
 │   ├── ceph.conf
 │   ├── cinder-backup
-│   │   └── ceph.client.cinder-backup.keyring # This file should be cinder-backup creds
+│   │   ├── ceph.client.cinder-backup.keyring
+│   │   └── ceph.client.cinder.keyring
 │   └── cinder-volume
-│       └── ceph.client.cinder.keyring # This file should be cinder creds
+│       └── ceph.client.cinder.keyring
 ├── glance
-│   ├── ceph.client.glance.keyring # This file should be glance creds
+│   ├── ceph.client.glance.keyring
 │   └── ceph.conf
 ├── neutron
 │   └── openvswitch_agent.ini
 ├── nova
-│   ├── ceph.client.cinder.keyring # This file should be cinder creds
-│   ├── ceph.client.nova.keyring # This file should be cinder creds
+│   ├── ceph.client.cinder.keyring
+│   ├── ceph.client.nova.keyring
 │   └── ceph.conf
-└── octavia
-    ├── client.cert-and-key.pem
-    ├── client_ca.cert.pem
-    ├── server_ca.cert.pem
-    └── server_ca.key.pem
+├── octavia
+│   ├── client.cert-and-key.pem
+│   ├── client_ca.cert.pem
+│   ├── server_ca.cert.pem
+│   └── server_ca.key.pem
+└── zun
+    └── zun-compute
+        ├── ceph.client.zun.keyring
+        └── ceph.conf
 ```
 
 ## OpenStack Bootstrapping
