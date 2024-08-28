@@ -25,7 +25,7 @@ sudo vim /etc/ssh/sshd_config
 
 ```bash
 # Set the version of Ceph to install
-CEPH_RELEASE=18.2.2
+CEPH_RELEASE=18.2.4
 
 # Pull the cephadm binary and make it executable
 curl --silent --remote-name \
@@ -35,7 +35,9 @@ chmod +x cephadm
 # Add the Ceph Reef repository and install the cephadm package
 sudo ./cephadm add-repo --release reef
 sudo ./cephadm install ceph
+```
 
+```bash
 # Bootstrap the first ceph node where you are running these commands
 sudo cephadm bootstrap --mon-ip 172.20.32.17 # Replace this IP with yours if different
 ```
@@ -48,14 +50,13 @@ Additionally, you'll need to add the `/etc/ceph/ceph.pub` key to the `~/.ssh/aut
 > If you don't do this, cephadm will not be able to communicate with the Ceph nodes and commands will fail.
 
 ```bash
-# Add the second and third nodes
 sudo ceph orch host add wise-oryx-1922 172.20.32.15 --labels _admin
 sudo ceph orch host add wired-gnat-r1518 172.20.32.16 --labels _admin
 
 # Add all of the OSDs to the ceph cluster
 sudo ceph orch daemon add osd active-viper-r1314:/dev/nvme0n1,/dev/nvme1n1
-sudo ceph orch daemon add osd wired-gnat-r1518:/dev/nvme0n1,/dev/nvme2n1
 sudo ceph orch daemon add osd wise-oryx-1922:/dev/nvme0n1,/dev/nvme1n1,/dev/nvme2n1,/dev/nvme3n1
+sudo ceph orch daemon add osd wired-gnat-r1518:/dev/nvme0n1,/dev/nvme2n1
 
 # Create the necessary pools for Ceph for OpenStack
 sudo ceph osd pool create volumes
@@ -123,15 +124,42 @@ config/
 │   ├── ceph.client.cinder.keyring
 │   ├── ceph.client.nova.keyring
 │   └── ceph.conf
-├── octavia
-│   ├── client.cert-and-key.pem
-│   ├── client_ca.cert.pem
-│   ├── server_ca.cert.pem
-│   └── server_ca.key.pem
-└── zun
-    └── zun-compute
-        ├── ceph.client.zun.keyring
-        └── ceph.conf
+└── octavia
+    ├── client.cert-and-key.pem
+    ├── client_ca.cert.pem
+    ├── server_ca.cert.pem
+    └── server_ca.key.pem
+```
+
+### Ceph Nuke
+
+If you've really screwed up, you can run the following commands on each of your hosts to completely nuke ceph and re-start the install/bootstrapping process
+
+```bash
+rm -rf /etc/systemd/system/ceph*
+killall -9 ceph-mon ceph-mgr ceph-mds
+rm -rf /var/lib/ceph/mon/  /var/lib/ceph/mgr/  /var/lib/ceph/mds/
+apt -y purge ceph-mon ceph-osd ceph-mgr ceph-mds
+rm /etc/init.d/ceph
+apt reinstall $(apt search ceph | grep installed | awk -F/ '{print $1}' | xargs);
+dpkg-reconfigure ceph-base
+dpkg-reconfigure ceph-mds
+dpkg-reconfigure ceph-common
+dpkg-reconfigure ceph-fuse
+apt reinstall $(apt search ceph | grep installed | awk -F/ '{print $1}' | xargs);
+
+# Clean Podman containers
+podman stop `podman ps -aq`
+podman rm `podman ps -aq`
+
+# Remove Ceph LVM devices
+for disk in $(lsblk | grep  ceph | cut -c7- | awk '{print $1}'); do
+    dmsetup remove ${disk}
+done
+
+# Remove Ceph directory contents
+rm -rf /etc/ceph/*
+rm -rf /var/lib/ceph/*
 ```
 
 ## OpenStack Bootstrapping

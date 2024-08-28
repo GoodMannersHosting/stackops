@@ -89,7 +89,7 @@ kolla_sysctl_conf_path: /etc/sysctl.conf
 ##################
 
 # Valid options are [ docker, podman ]
-kolla_container_engine: podman
+kolla_container_engine: docker
 
 
 ################
@@ -109,7 +109,7 @@ kolla_container_engine: podman
 # Docker client timeout in seconds.
 #docker_client_timeout: 120
 
-#docker_configure_for_zun: "no"
+docker_configure_for_zun: "yes"
 containerd_configure_for_zun: "yes"
 #containerd_grpc_gid: 42463
 
@@ -329,9 +329,9 @@ enable_barbican: "yes"
 #enable_ceilometer: "no"
 #enable_ceilometer_ipmi: "no"
 #enable_cells: "no"
-# enable_central_logging: "no"
-# opensearch_soft_retention_period_days: 2
-# opensearch_hard_retention_period_days: 4
+enable_central_logging: "yes"
+opensearch_soft_retention_period_days: 1
+opensearch_hard_retention_period_days: 1
 #enable_ceph_rgw: "no"
 #enable_ceph_rgw_loadbalancer: "{{ enable_ceph_rgw | bool }}"
 enable_cinder: "yes"
@@ -833,12 +833,12 @@ octavia_certs_organizational_unit: Octavia
 # - ephemeral (optional)
 # - swap (optional)
 # - extra_specs (optional)
-octavia_amp_flavor:
-  name: "amphora"
-  is_public: yes
-  vcpus: 1
-  ram: 1024
-  disk: 5
+# octavia_amp_flavor:
+#   name: "amphora"
+#   is_public: yes
+#   vcpus: 1
+#   ram: 1024
+#   disk: 5
 
 # Octavia security groups. lb-mgmt-sec-grp is for amphorae.
 #octavia_amp_security_groups:

@@ -1,5 +1,5 @@
 ---
-- name: Openstack  Prep
+- name: Openstack Prep
   hosts: openstack
   become: true
   gather_facts: true
