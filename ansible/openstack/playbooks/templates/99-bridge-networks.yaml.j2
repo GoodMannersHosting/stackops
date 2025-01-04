@@ -1,11 +1,43 @@
 network:
   version: 2
   renderer: networkd
-  bridges:
-{% if inventory_hostname in groups['storage_nodes'] or inventory_hostname in groups['nova_nodes'] %}
-    br_storage:
+{% if inventory_hostname in groups['mini_pcs'] %}
+  bonds:
+    bond_storage:
+      mtu: 8972
       interfaces:
+{% for port in hostvars[inventory_hostname]['br_storage']['nics'] %}
+        - {{ port }}
+{% endfor %}
+      parameters:
+        mode: 802.3ad
+        lacp-rate: fast
+        mii-monitor-interval: 100
+        up-delay: 200
+        down-delay: 200
+    bond_vxlan:
+      mtu: 8972
+      interfaces:
+{% for port in hostvars[inventory_hostname]['br_vxlan']['nics'] %}
+        - {{ port }}
+{% endfor %}
+      parameters:
+        mode: 802.3ad
+        lacp-rate: fast
+        mii-monitor-interval: 100
+        up-delay: 200
+        down-delay: 200
+{% endif %}
+  bridges:
+    br_storage:
+      link-local: [ ]
+      mtu: 8972
+      interfaces:
+{% if inventory_hostname in groups['mini_pcs'] %}
+        - bond_storage
+{% else %}
         - {{ hostvars[inventory_hostname]['br_storage']['nic'] | default("") }}
+{% endif %}
       addresses:
         - {{ hostvars[inventory_hostname]['br_storage']['address'] | default("") }}
       dhcp4: no
@@ -18,11 +50,16 @@ network:
 {% for domain in nameservers['search'] %}
           - {{ domain }}
 {% endfor %}
-{% endif %}
 {% if inventory_hostname in groups['infra_nodes'] or inventory_hostname in groups['nova_nodes'] %}
     br_vxlan:
+      link-local: [ ]
+      mtu: 8972
       interfaces:
+{% if inventory_hostname in groups['mini_pcs'] %}
+        - bond_vxlan
+{% else %}
         - {{ hostvars[inventory_hostname]['br_vxlan']['nic'] | default("") }}
+{% endif %}
       addresses:
         - {{ hostvars[inventory_hostname]['br_vxlan']['address'] | default("") }}
       dhcp4: no
@@ -36,10 +73,11 @@ network:
           - {{ domain }}
 {% endfor %}
 {% endif %}
-    br_vlan:
-      mtu: 9000
-      dhcp4: no
   vlans:
     neutron:
       id: 501
-      link: {{ hostvars[inventory_hostname]['br_mgmt']['nic'] }}
+{% if inventory_hostname in groups['mini_pcs'] %}
+      link: bond_vxlan
+{% else %}
+      link: br_vxlan
+{% endif %}

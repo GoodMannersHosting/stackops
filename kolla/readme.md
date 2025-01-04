@@ -14,7 +14,7 @@ source /opt/kolla-venv/bin/activate
 
 pip install -U pip
 pip install 'ansible-core>=2.15,<2.16.99'
-pip install git+https://opendev.org/openstack/kolla-ansible@stable/2024.1
+pip install git+https://opendev.org/openstack/kolla-ansible@stable/2024.2
 
 sudo mkdir -p /etc/kolla
 sudo chown ${USER}:${USER} /etc/kolla

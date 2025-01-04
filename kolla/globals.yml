@@ -63,7 +63,7 @@ kolla_base_distro: "ubuntu"
 # All-In-One without haproxy and keepalived, you can set enable_haproxy to no
 # in "OpenStack options" section, and set this value to the IP of your
 # 'network_interface' as set in the Networking section below.
-kolla_internal_vip_address: "172.22.0.10"
+kolla_internal_vip_address: "172.20.0.10"
 
 # This is the DNS name that maps to the kolla_internal_vip_address VIP. By
 # default it is the same as kolla_internal_vip_address.
@@ -74,7 +74,7 @@ kolla_internal_vip_address: "172.22.0.10"
 # kolla_internal_vip_address, allowing internal and external communication to
 # share the same address.  Specify a kolla_external_vip_address to separate
 # internal and external requests between two VIPs.
-kolla_external_vip_address: "172.20.0.10"
+kolla_external_vip_address: "172.22.0.10"
 
 # The Public address used to communicate with OpenStack as set in the public_url
 # for the endpoints that will be created. This DNS name should map to
@@ -90,7 +90,6 @@ kolla_sysctl_conf_path: /etc/sysctl.conf
 
 # Valid options are [ docker, podman ]
 kolla_container_engine: docker
-
 
 ################
 # Docker options
@@ -292,7 +291,7 @@ letsencrypt_cron_renew_schedule: "0   */12   *   *   *"
 # Region options
 ################
 # Use this option to change the name of this region.
-openstack_region_name: "us-east-1"
+openstack_region_name: "nova"
 
 # Use this option to define a list of region names - only needs to be configured
 # in a multi-region deployment, and then only in the *first* region.
@@ -519,7 +518,7 @@ update_keystone_service_user_passwords: "true"
 # Configure image backend.
 glance_backend_ceph: "yes"
 glance_backend_file: "no"
-glance_logging_debug: "yes"
+glance_logging_debug: "no"
 #glance_backend_swift: "no"
 #glance_backend_vmware: "no"
 #glance_backend_s3: "no"
@@ -833,12 +832,12 @@ octavia_certs_organizational_unit: Octavia
 # - ephemeral (optional)
 # - swap (optional)
 # - extra_specs (optional)
-# octavia_amp_flavor:
-#   name: "amphora"
-#   is_public: yes
-#   vcpus: 1
-#   ram: 1024
-#   disk: 5
+octavia_amp_flavor:
+  name: "amphora"
+  is_public: yes
+  vcpus: 1
+  ram: 1024
+  disk: 5
 
 # Octavia security groups. lb-mgmt-sec-grp is for amphorae.
 #octavia_amp_security_groups:
@@ -920,11 +919,11 @@ neutron_dns_domain: "internal.openstack.danmanners.com."
 #############
 # Ceph Enablement for Backends
 #############
-ceph_version: "reef"
+ceph_version: "squid"
 zun_configure_for_cinder_ceph: "yes"
 
 cinder_logging_debug: "yes"
-placement_logging_debug: "yes"
+placement_logging_debug: "no"
 kuryr_services:
   kuryr:
     container_name: kuryr

@@ -13,7 +13,6 @@ includes:
   ansible: .taskfiles/Ansible/Taskfile.yaml
 
 tasks:
-
   default:
     silent: true
     cmd: task -l
