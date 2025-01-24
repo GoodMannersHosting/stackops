@@ -28,6 +28,8 @@ all:
             nics:
             - enp1s0
             - enp2s0
+          octavia:
+            address: 172.31.1.2/22
           virtual: false
         r29-1.openstack.danmanners.com:
           br_mgmt:
@@ -46,6 +48,8 @@ all:
             nics:
             - enp1s0
             - enp2s0
+          octavia:
+            address: 172.31.1.3/22
           virtual: false
         r29-2.openstack.danmanners.com:
           br_mgmt:
@@ -64,6 +68,8 @@ all:
             nics:
             - enp1s0
             - enp2s0
+          octavia:
+            address: 172.31.1.4/22
           virtual: false
     full_sized_systems:
       hosts:
@@ -81,6 +87,8 @@ all:
             gateway: 172.22.0.1/16
             nic: enp3s0f0
           virtual: false
+          octavia:
+            address: 172.31.1.4/22
         r22.openstack.danmanners.com:
           br_mgmt:
             address: 172.20.1.5/22
@@ -143,6 +151,14 @@ all:
 
         mini_pcs:
           hosts:
+            r32-2.openstack.danmanners.com:
+            r29-1.openstack.danmanners.com:
+            r29-2.openstack.danmanners.com:
+
+
+        octavia:
+          hosts:
+            r32-1.openstack.danmanners.com:
             r32-2.openstack.danmanners.com:
             r29-1.openstack.danmanners.com:
             r29-2.openstack.danmanners.com:

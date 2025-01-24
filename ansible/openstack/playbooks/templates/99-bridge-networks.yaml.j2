@@ -81,3 +81,16 @@ network:
 {% else %}
       link: br_vxlan
 {% endif %}
+{% if inventory_hostname in groups['octavia'] %}
+    octavia:
+      id: 601
+{% if inventory_hostname in groups['mini_pcs'] %}
+      link: bond_vxlan
+{% else %}
+      link: br_vxlan
+{% endif %}
+      dhcp4: no
+      link-local: [ ]
+      addresses:
+      - {{ hostvars[inventory_hostname]['octavia']['address'] | default("") }}
+{% endif %}
