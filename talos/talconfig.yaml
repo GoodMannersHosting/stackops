@@ -10,12 +10,12 @@ clusterSvcNets:
 cniConfig:
   name: none
 
-additionalApiServerCertSans:
+additionalApiServerCertSans: &san
 - 172.20.0.10
-
-additionalMachineCertSans:
-- 172.20.0.10
+- 127.0.0.1
 - baremetal.homelab.danmanners.com
+
+additionalMachineCertSans: *san
 
 nodes:
 # Control Plane Nodes
@@ -31,7 +31,7 @@ nodes:
         - siderolabs/util-linux-tools
   ipAddress: 172.20.1.2
   disableSearchDomain: true
-  nameservers:
+  nameservers: &nameservers
   - 172.20.0.1
   - 10.3.0.1
   networkInterfaces:
@@ -104,9 +104,7 @@ nodes:
   schematic: *miniPc
   ipAddress: 172.20.1.3
   disableSearchDomain: true
-  nameservers:
-  - 172.20.0.1
-  - 10.3.0.1
+  nameservers: *nameservers
   networkInterfaces:
   # Bridge Interfaces
   - interface: br_mgmt
@@ -176,8 +174,7 @@ nodes:
   installDisk: /dev/sda
   schematic: *miniPc
   ipAddress: 172.20.1.4
-  nameservers:
-  - 172.20.0.1
+  nameservers: *nameservers
   networkInterfaces:
   # Bridge Interfaces
   - interface: br_mgmt
@@ -373,6 +370,17 @@ patches:
 
 worker:
   schematic: {}
+  patches:
+    - |-
+      - op: add
+        path: /machine/features
+        value:
+          stableHostname: true
+          diskQuotaSupport: true
+          rbac: true
+          kubePrism:
+            enabled: true
+            port: 7445
 
 controlPlane:
   schematic: {}
@@ -391,3 +399,45 @@ controlPlane:
       value:
         enabled: false
         forwardKubeDNSToHost: false
+  - |-
+    - op: add
+      path: /cluster/apiServer/extraArgs
+      value:
+        feature-gates: ServerSideApply=true
+        tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+  - |-
+    - op: add
+      path: /cluster/controllerManager/extraArgs
+      value:
+        bind-address: 0.0.0.0
+  - |-
+    - op: add
+      path: /cluster/scheduler/extraArgs
+      value:
+        bind-address: 0.0.0.0
+  - |-
+    - op: add
+      path: /cluster/discovery/registries/service
+      value:
+        disabled: false
+  - |-
+    - op: add
+      path: /cluster/proxy
+      value:
+        disabled: true
+  - |-
+    - op: add
+      path: /cluster/etcd/extraArgs
+      value:
+        listen-metrics-urls: http://0.0.0.0:2381
+        metrics: extensive
+  - |-
+    - op: add
+      path: /machine/features
+      value:
+        stableHostname: true
+        diskQuotaSupport: true
+        rbac: true
+        kubePrism:
+          enabled: true
+          port: 7445
