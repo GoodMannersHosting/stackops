@@ -13,15 +13,12 @@ clusterSvcNets:
 cniConfig:
   name: none
 
-additionalApiServerCertSans:
-- 127.0.0.1
-- localhost
-- baremetal.homelab.danmanners.com
+additionalApiServerCertSans: &certs
+  - baremetal.homelab.danmanners.com
+  - &vip 172.20.0.10
+  - 127.0.0.1
 
-additionalMachineCertSans:
-- baremetal.homelab.danmanners.com
-- localhost
-- 172.20.0.10
+additionalMachineCertSans: *certs
 
 nodes:
 # Control Plane Nodes
@@ -29,7 +26,7 @@ nodes:
 - hostname: cp-r32-1.homelab.danmanners.com
   controlPlane: true
   installDisk: /dev/nvme2n1
-  ingressFirewall:
+  ingressFirewall: &firewall
     defaultAction: accept
   schematic:
     customization:
@@ -55,14 +52,13 @@ nodes:
     addresses:
     - 172.20.1.1/22
     vip:
-      ip: 172.20.0.10
+      ip: *vip
     bridge:
       stp:
         enabled: false
       interfaces:
       - enp91s0
     routes:
-    - network: 172.20.0.0/22
     - network: 0.0.0.0/0
       gateway: 172.20.0.1
   - interface: br_storage
@@ -96,8 +92,7 @@ nodes:
 - hostname: cp-r32-2.homelab.danmanners.com
   controlPlane: true
   installDisk: /dev/sda
-  ingressFirewall:
-    defaultAction: accept
+  ingressFirewall: *firewall
   schematic: &intel
     customization:
       systemExtensions:
@@ -116,14 +111,13 @@ nodes:
     addresses:
     - 172.20.1.2/22
     vip:
-      ip: 172.20.0.10
+      ip: *vip
     bridge:
       stp:
         enabled: false
       interfaces:
       - enp6s0
     routes:
-    - network: 172.20.0.0/22
     - network: 0.0.0.0/0
       gateway: 172.20.0.1
   - interface: br_storage
@@ -183,8 +177,7 @@ nodes:
 - hostname: cp-r29-1.homelab.danmanners.com
   controlPlane: true
   installDisk: /dev/sda
-  ingressFirewall:
-    defaultAction: accept
+  ingressFirewall: *firewall
   schematic: *intel
   ipAddress: 172.20.1.3
   disableSearchDomain: true
@@ -197,14 +190,13 @@ nodes:
     addresses:
     - 172.20.1.3/22
     vip:
-      ip: 172.20.0.10
+      ip: *vip
     bridge:
       stp:
         enabled: false
       interfaces:
       - enp6s0
     routes:
-    - network: 172.20.0.0/22
     - network: 0.0.0.0/0
       gateway: 172.20.0.1
   - interface: br_storage
@@ -268,8 +260,7 @@ nodes:
 - hostname: cp-r29-2.homelab.danmanners.com
   controlPlane: true
   installDisk: /dev/sda
-  ingressFirewall:
-    defaultAction: accept
+  ingressFirewall: *firewall
   schematic: *intel
   ipAddress: 172.20.1.4
   disableSearchDomain: true
@@ -282,14 +273,13 @@ nodes:
     addresses:
     - 172.20.1.4/22
     vip:
-      ip: 172.20.0.10
+      ip: *vip
     bridge:
       stp:
         enabled: false
       interfaces:
       - enp6s0
     routes:
-    - network: 172.20.0.0/22
     - network: 0.0.0.0/0
       gateway: 172.20.0.1
   - interface: br_storage
@@ -404,8 +394,7 @@ nodes:
 - hostname: worker-r18.homelab.danmanners.com
   controlPlane: false
   installDisk: /dev/nvme1n1
-  ingressFirewall:
-    defaultAction: accept
+  ingressFirewall: *firewall
   schematic: *amdHypervisor
   ipAddress: 172.20.1.6
   disableSearchDomain: true
@@ -423,7 +412,6 @@ nodes:
       interfaces:
       - enp8s0
     routes:
-    - network: 172.20.0.0/22
     - network: 0.0.0.0/0
       gateway: 172.20.0.1
   - interface: br_storage
@@ -458,8 +446,7 @@ nodes:
   controlPlane: false
   installDisk: /dev/sdd
   talosImageURL: factory.talos.dev/installer/45909762efd03de69a3f769cc4a5f5a653c10d63fdbe1dbcccf443b135d37594
-  ingressFirewall:
-    defaultAction: accept
+  ingressFirewall: *firewall
   schematic:
     customization:
       systemExtensions:
@@ -485,7 +472,6 @@ nodes:
       interfaces:
       - eno1
     routes:
-    - network: 172.20.0.0/22
     - network: 0.0.0.0/0
       gateway: 172.20.0.1
   - interface: br_storage
@@ -521,7 +507,7 @@ patches:
   - op: add
     path: /machine/kubelet/extraArgs
     value:
-      rotate-server-certificates: false # true
+      rotate-server-certificates: true # false
 - |-
   - op: add
     path: /machine/kubelet/extraConfig
