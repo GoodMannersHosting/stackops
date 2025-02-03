@@ -1,5 +1,6 @@
 clusterName: baremetal
 talosVersion: v1.9.3
+domain: cluster.local
 # talosVersion: v1.8.4 # v1.9.2 and v1.9.3 are broken AF, don't know why yet.
 kubernetesVersion: 1.32.1
 # kubernetesVersion: 1.31.4 # 1.32.0 is broken AF, don't know why yet.
@@ -19,6 +20,7 @@ additionalApiServerCertSans:
 
 additionalMachineCertSans:
 - baremetal.homelab.danmanners.com
+- localhost
 - 172.20.0.10
 
 nodes:
@@ -41,14 +43,19 @@ nodes:
   ipAddress: 172.20.1.1
   disableSearchDomain: true
   nameservers: &nameservers
+    - 172.20.0.1
     - 10.3.0.1
   networkInterfaces:
   # Bridge Interfaces
+  - interface: enp88s0
+    ignore: true
   - interface: br_mgmt
     dhcp: false
     mtu: 8972
     addresses:
     - 172.20.1.1/22
+    vip:
+      ip: 172.20.0.10
     bridge:
       stp:
         enabled: false
@@ -514,17 +521,12 @@ patches:
   - op: add
     path: /machine/kubelet/extraArgs
     value:
-      rotate-server-certificates: true
+      rotate-server-certificates: false # true
 - |-
   - op: add
     path: /machine/kubelet/extraConfig
     value: 
       maxPods: 150
-- |-
-  - op: add
-    path: /machine/kubelet/nodeIP
-    value:
-      validSubnets: [172.20.0.0/22]
 - |-
   - op: add
     path: /machine/sysctls
@@ -542,20 +544,19 @@ patches:
   - op: add
     path: /machine/time/bootTimeout
     value: 20s
+- |-
+  - op: add
+    path: /machine/features
+    value:
+      stableHostname: true
+      diskQuotaSupport: true
+      rbac: true
+      kubePrism:
+        enabled: false
+        port: 7445
 
 worker:
   schematic: {}
-  patches:
-  - |-
-    - op: add
-      path: /machine/features
-      value:
-        stableHostname: true
-        diskQuotaSupport: true
-        rbac: true
-        kubePrism:
-          enabled: true
-          port: 7445
 
 controlPlane:
   schematic: {}
@@ -565,9 +566,9 @@ controlPlane:
       path: /cluster/coreDNS
       value:
         disabled: true
-  - |-
-    - op: remove
-      path: /cluster/apiServer/admissionControl
+  # - |-
+  #   - op: remove
+  #     path: /cluster/apiServer/admissionControl
   - |-
     - op: add
       path: /machine/features/hostDNS
@@ -578,7 +579,7 @@ controlPlane:
     - op: add
       path: /cluster/apiServer/extraArgs
       value:
-        feature-gates: ServerSideApply=true,AuthorizeNodeWithSelectors=false
+        feature-gates: ServerSideApply=true,AuthorizeNodeWithSelectors=false,AuthorizeWithSelectors=false
         tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
   - |-
     - op: add
@@ -590,11 +591,16 @@ controlPlane:
       path: /cluster/scheduler/extraArgs
       value:
         bind-address: 0.0.0.0
-  - |-
-    - op: add
-      path: /cluster/discovery/registries/service
-      value:
-        disabled: false
+  # - |-
+  #   - op: add
+  #     path: /cluster/discovery/registries/service
+  #     value:
+  #       disabled: false
+  # - |-
+  #   - op: add
+  #     path: /cluster/discovery/registries/kubernetes
+  #     value:
+  #       disabled: false
   - |-
     - op: add
       path: /cluster/proxy
@@ -602,17 +608,16 @@ controlPlane:
         disabled: true
   - |-
     - op: add
+      path: /machine/kubelet/nodeIP
+      value:
+        validSubnets: [172.20.0.0/22]
+  - |-
+    - op: add
+      path: /cluster/etcd/advertisedSubnets
+      value: [172.20.0.0/22]
+  - |-
+    - op: add
       path: /cluster/etcd/extraArgs
       value:
         listen-metrics-urls: http://0.0.0.0:2381
         metrics: extensive
-  - |-
-    - op: add
-      path: /machine/features
-      value:
-        stableHostname: true
-        diskQuotaSupport: true
-        rbac: true
-        kubePrism:
-          enabled: true
-          port: 7445
