@@ -1,10 +1,9 @@
 clusterName: baremetal
 talosVersion: v1.9.3
 domain: cluster.local
-# talosVersion: v1.8.4 # v1.9.2 and v1.9.3 are broken AF, don't know why yet.
 kubernetesVersion: 1.32.1
-# kubernetesVersion: 1.31.4 # 1.32.0 is broken AF, don't know why yet.
 endpoint: "https://baremetal.homelab.danmanners.com:6443"
+
 clusterPodNets:
 - 10.244.0.0/16
 clusterSvcNets:
@@ -41,26 +40,18 @@ nodes:
   disableSearchDomain: true
   nameservers: &nameservers
     - 172.20.0.1
-    - 10.3.0.1
   networkInterfaces:
-  # Bridge Interfaces
-  - interface: enp88s0
-    ignore: true
-  - interface: br_mgmt
+  - deviceSelector:
+      hardwareAddr: 58:47:ca:79:7b:57
     dhcp: false
     mtu: 8972
     addresses:
     - 172.20.1.1/22
-    vip:
-      ip: *vip
-    bridge:
-      stp:
-        enabled: false
-      interfaces:
-      - enp91s0
     routes:
     - network: 0.0.0.0/0
       gateway: 172.20.0.1
+    vip:
+      ip: *vip
   - interface: br_storage
     dhcp: false
     mtu: 8972
@@ -88,7 +79,10 @@ nodes:
     - vlanId: 601 # Neutron Overlay Network
       dhcp: false
       mtu: 8900
-## Control Plane R32-2
+  - interface: enp88s0
+    dhcp: false
+    ignore: true
+  ## Control Plane R32-2
 - hostname: cp-r32-2.homelab.danmanners.com
   controlPlane: true
   installDisk: /dev/sda
@@ -521,15 +515,20 @@ patches:
       fs.file-max: 131072
       fs.inotify.max_user_watches: 1048576
       fs.inotify.max_user_instances: 8192
+      net.core.default_qdisc: fq             # 10Gb/s
+      net.core.rmem_max: 67108864            # 10Gb/s | Cloudflared / QUIC
+      net.core.wmem_max: 67108864            # 10Gb/s | Cloudflared / QUIC
+      net.ipv4.tcp_congestion_control: bbr   # 10Gb/s
+      net.ipv4.tcp_fastopen: 3               # Send and accept data in the opening SYN packet
+      net.ipv4.tcp_mtu_probing: 1            # 10Gb/s | Jumbo frames
+      net.ipv4.tcp_rmem: 4096 87380 33554432 # 10Gb/s
+      net.ipv4.tcp_wmem: 4096 65536 33554432 # 10Gb/s
+      net.ipv4.tcp_window_scaling: 1         # 10Gb/s
 - |-
   - op: add
     path: /machine/time
     value:
       servers: [time.cloudflare.com]
-- |-
-  - op: add
-    path: /machine/time/bootTimeout
-    value: 20s
 - |-
   - op: add
     path: /machine/features
@@ -538,7 +537,7 @@ patches:
       diskQuotaSupport: true
       rbac: true
       kubePrism:
-        enabled: false
+        enabled: true
         port: 7445
 
 worker:
@@ -552,21 +551,14 @@ controlPlane:
       path: /cluster/coreDNS
       value:
         disabled: true
-  # - |-
-  #   - op: remove
-  #     path: /cluster/apiServer/admissionControl
+  - |-
+    - op: remove
+      path: /cluster/apiServer/admissionControl
   - |-
     - op: add
       path: /machine/features/hostDNS
       value:
-        enabled: false
         forwardKubeDNSToHost: false
-  - |-
-    - op: add
-      path: /cluster/apiServer/extraArgs
-      value:
-        feature-gates: ServerSideApply=true,AuthorizeNodeWithSelectors=false,AuthorizeWithSelectors=false
-        tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
   - |-
     - op: add
       path: /cluster/controllerManager/extraArgs
@@ -577,16 +569,6 @@ controlPlane:
       path: /cluster/scheduler/extraArgs
       value:
         bind-address: 0.0.0.0
-  # - |-
-  #   - op: add
-  #     path: /cluster/discovery/registries/service
-  #     value:
-  #       disabled: false
-  # - |-
-  #   - op: add
-  #     path: /cluster/discovery/registries/kubernetes
-  #     value:
-  #       disabled: false
   - |-
     - op: add
       path: /cluster/proxy
@@ -606,4 +588,3 @@ controlPlane:
       path: /cluster/etcd/extraArgs
       value:
         listen-metrics-urls: http://0.0.0.0:2381
-        metrics: extensive
