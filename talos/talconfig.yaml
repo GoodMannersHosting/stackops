@@ -439,7 +439,6 @@ nodes:
 - hostname: worker-r14.homelab.danmanners.com
   controlPlane: false
   installDisk: /dev/sdd
-  talosImageURL: factory.talos.dev/installer/45909762efd03de69a3f769cc4a5f5a653c10d63fdbe1dbcccf443b135d37594
   ingressFirewall: *firewall
   schematic:
     customization:
@@ -499,11 +498,6 @@ nodes:
 patches:
 - |-
   - op: add
-    path: /machine/kubelet/extraArgs
-    value:
-      rotate-server-certificates: true # false
-- |-
-  - op: add
     path: /machine/kubelet/extraConfig
     value: 
       maxPods: 150
@@ -531,21 +525,67 @@ patches:
       servers: [time.cloudflare.com]
 - |-
   - op: add
-    path: /machine/features
+    path: /machine/features/hostDNS
     value:
-      stableHostname: true
-      diskQuotaSupport: true
-      rbac: true
-      kubePrism:
-        enabled: true
-        port: 7445
+      enabled: true
+      resolveMemberNames: true
+      forwardKubeDNSToHost: false
 
 worker:
-  schematic: {}
+  schematic:
+    customization:
+      extraKernelArgs:
+      - apparmor=0 # Less security, faster puter
+      - init_on_alloc=0 # Less security, faster puter
+      - init_on_free=0 # Less security, faster puter
+      - intel_iommu=on # PCI Passthrough
+      - iommu=pt # PCI Passthrough
+      - mitigations=off # Less security, faster puter
+      - security=none # Less security, faster puter
+      - talos.auditd.disabled=1 # Less security, faster puter
+  patches:
+  - |-
+    - op: add
+      path: /machine/kubelet/nodeIP
+      value:
+        validSubnets: [172.20.0.0/22]
+  - |-
+    - op: add
+      path: /cluster/proxy
+      value:
+        disabled: true
+  - |-
+    - op: add
+      path: /machine/features
+      value:
+        stableHostname: true
+        diskQuotaSupport: true
+        rbac: true
 
 controlPlane:
   schematic: {}
   patches:
+  - |-
+    - op: add
+      path: /machine/kubelet/extraArgs
+      value:
+        rotate-server-certificates: true
+        rotate-certificates: true
+  - |-
+    - op: add
+      path: /machine/features
+      value:
+        stableHostname: true
+        diskQuotaSupport: true
+        rbac: true
+        kubePrism:
+          enabled: true
+          port: 7445
+  - |-
+    op: add
+    path: /cluster
+    value:
+      allowSchedulingOnControlPlanes: true
   - |-
     - op: add
       path: /cluster/coreDNS
@@ -556,9 +596,9 @@ controlPlane:
       path: /cluster/apiServer/admissionControl
   - |-
     - op: add
-      path: /machine/features/hostDNS
+      path: /cluster/apiServer/extraArgs
       value:
-        forwardKubeDNSToHost: false
+        enable-aggregator-routing: true
   - |-
     - op: add
       path: /cluster/controllerManager/extraArgs
@@ -588,3 +628,13 @@ controlPlane:
       path: /cluster/etcd/extraArgs
       value:
         listen-metrics-urls: http://0.0.0.0:2381
+  - |-
+    - op: add
+      path: /machine/features/kubernetesTalosAPIAccess
+      value:
+        enabled: true
+        allowedRoles:
+          - os:admin
+        allowedKubernetesNamespaces:
+          - actions-runner-system
+          - system-upgrade
