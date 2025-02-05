@@ -3,3 +3,5 @@
 .venv
 .task
 etc/
+*.zip
+.DS_Store

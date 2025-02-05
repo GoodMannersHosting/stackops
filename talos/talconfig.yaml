@@ -13,11 +13,10 @@ cniConfig:
   name: none
 
 additionalApiServerCertSans: &certs
-  - baremetal.homelab.danmanners.com
   - &vip 172.20.0.10
   - 127.0.0.1
 
-# additionalMachineCertSans: *certs
+additionalMachineCertSans: *certs
 
 nodes:
 # Control Plane Nodes
@@ -41,8 +40,21 @@ nodes:
   nameservers: &nameservers
     - 172.20.0.1
   networkInterfaces:
-  - deviceSelector:
-      hardwareAddr: 58:47:ca:79:7b:57
+  # Parent Interface set MTU to 8972
+  - interface: enp91s0
+    dhcp: false
+    ignore: false
+    mtu: 8972
+  - interface: enp3s0f0np0
+    dhcp: false
+    ignore: false
+    mtu: 8972
+  - interface: enp3s0f1np1
+    dhcp: false
+    ignore: false
+    mtu: 8972
+  # Bridge Interfaces
+  - interface: br_mgmt
     dhcp: false
     mtu: 8972
     addresses:
@@ -52,6 +64,11 @@ nodes:
       gateway: 172.20.0.1
     vip:
       ip: *vip
+    bridge:
+      stp:
+        enabled: false
+      interfaces:
+      - enp91s0
   - interface: br_storage
     dhcp: false
     mtu: 8972
@@ -82,7 +99,7 @@ nodes:
   - interface: enp88s0
     dhcp: false
     ignore: true
-  ## Control Plane R32-2
+## Control Plane R32-2
 - hostname: cp-r32-2.homelab.danmanners.com
   controlPlane: true
   installDisk: /dev/sda
@@ -453,6 +470,19 @@ nodes:
   disableSearchDomain: true
   nameservers: *nameservers
   networkInterfaces:
+  # Parent Interface set MTU to 8972
+  - interface: eno1
+    dhcp: false
+    ignore: false
+    mtu: 8972
+  - interface: enp5s0f0
+    dhcp: false
+    ignore: false
+    mtu: 8972
+  - interface: enp5s0f1
+    dhcp: false
+    ignore: false
+    mtu: 8972
   # Bridge Interfaces
   - interface: br_mgmt
     dhcp: false
@@ -561,6 +591,9 @@ worker:
         stableHostname: true
         diskQuotaSupport: true
         rbac: true
+        kubePrism:
+          enabled: true
+          port: 7445
 
 controlPlane:
   schematic: {}

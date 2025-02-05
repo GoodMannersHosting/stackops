@@ -16,9 +16,8 @@ cgroup:
 cluster:
   id: 1
   name: baremetal
-# devices:
-# - br_vxlan
-# - br_mgmt
+devices:
+- br_vxlan
 enableIPv4BIGTCP: true
 endpointRoutes:
   enabled: true
