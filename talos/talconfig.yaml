@@ -17,7 +17,7 @@ additionalApiServerCertSans: &certs
   - &vip 172.20.0.10
   - 127.0.0.1
 
-additionalMachineCertSans: *certs
+# additionalMachineCertSans: *certs
 
 nodes:
 # Control Plane Nodes
@@ -582,9 +582,7 @@ controlPlane:
           enabled: true
           port: 7445
   - |-
-    op: add
-    path: /cluster
-    value:
+    cluster:
       allowSchedulingOnControlPlanes: true
   - |-
     - op: add
