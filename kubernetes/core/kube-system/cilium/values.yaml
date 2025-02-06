@@ -18,6 +18,8 @@ cluster:
   name: baremetal
 devices:
 - br_vxlan
+egressGateway:
+  enabled: true
 enableIPv4BIGTCP: true
 endpointRoutes:
   enabled: true
