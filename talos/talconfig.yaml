@@ -1,7 +1,7 @@
 clusterName: baremetal
-talosVersion: v1.9.3
+talosVersion: v1.9.4
 domain: cluster.local
-kubernetesVersion: 1.32.1
+kubernetesVersion: 1.32.2
 endpoint: "https://baremetal.homelab.danmanners.com:6443"
 
 clusterPodNets:
@@ -62,10 +62,9 @@ nodes:
     routes:
     - network: 10.3.0.0/24
       gateway: &mgmt_gateway 172.20.0.1
-    - network: 172.20.0.0/22
     - network: 0.0.0.0/0
       gateway: *mgmt_gateway
-      metric: 1025
+      metric: 1024
     vip:
       ip: *vip
     bridge:
@@ -87,7 +86,7 @@ nodes:
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
-      metric: 1024
+      metric: 0
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -97,13 +96,13 @@ nodes:
         enabled: false
       interfaces:
       - enp3s0f1np1
-    vlans:
-    - vlanId: &neutron_vlan 501
-      dhcp: false
-      mtu: &linux_vlan_jumbo_frames 8900
-    - vlanId: &octavia_vlan 601
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
+    vlans: &vlan_config
+      - vlanId: &neutron_vlan 501
+        dhcp: false
+        mtu: &linux_vlan_jumbo_frames 8900
+      - vlanId: &octavia_vlan 601
+        dhcp: false
+        mtu: *linux_vlan_jumbo_frames
   - interface: enp88s0
     dhcp: false
     ignore: true
@@ -168,7 +167,7 @@ nodes:
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
-      metric: 1024
+      metric: 100
   # Bond Interfaces
   - interface: bond_vxlan
     dhcp: false
@@ -183,13 +182,7 @@ nodes:
       updelay: 200
       downdelay: 200
     # Neutron VLAN Interfaces
-    vlans:
-    - vlanId: *neutron_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
-    - vlanId: *octavia_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
+    vlans: *vlan_config
   - interface: bond_storage
     dhcp: false
     mtu: *linux_jumbo_frames
@@ -261,7 +254,7 @@ nodes:
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
-      metric: 1024
+      metric: 100
   # Bond Interfaces
   - interface: bond_vxlan
     dhcp: false
@@ -276,13 +269,7 @@ nodes:
       updelay: 200
       downdelay: 200
     # Neutron VLAN Interfaces
-    vlans:
-    - vlanId: *neutron_vlan
-      dhcp: false
-      mtu: *linux_jumbo_frames
-    - vlanId: *octavia_vlan
-      dhcp: false
-      mtu: *linux_jumbo_frames
+    vlans: *vlan_config
   - interface: bond_storage
     dhcp: false
     mtu: *linux_jumbo_frames
@@ -354,7 +341,7 @@ nodes:
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
-      metric: 1024
+      metric: 100
   # Bond Interfaces
   - interface: bond_vxlan
     dhcp: false
@@ -369,13 +356,7 @@ nodes:
       updelay: 200
       downdelay: 200
     # Neutron VLAN Interfaces
-    vlans:
-    - vlanId: *neutron_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
-    - vlanId: *octavia_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
+    vlans: *vlan_config
   - interface: bond_storage
     dhcp: false
     mtu: *linux_jumbo_frames
@@ -392,7 +373,7 @@ nodes:
 ## Worker R22
 - hostname: worker-r22.homelab.danmanners.com
   controlPlane: false
-  installDisk: /dev/nvme0n1
+  installDisk: /dev/nvme1n1
   schematic: &amdHypervisor
     customization:
       systemExtensions:
@@ -405,15 +386,7 @@ nodes:
   nameservers: *nameservers
   networkInterfaces:
   # Parent Interfaces set MTU to 8972
-  - interface: enp42s0
-    dhcp: false
-    ignore: false
-    mtu: *linux_jumbo_frames
-  - interface: enp4s0f0
-    dhcp: false
-    ignore: false
-    mtu: *linux_jumbo_frames
-  - interface: enp4s0f1
+  - interface: enp7s0
     dhcp: false
     ignore: false
     mtu: *linux_jumbo_frames
@@ -425,7 +398,7 @@ nodes:
     - 172.20.1.5/22
     bridge:
       interfaces:
-      - enp42s0
+      - enp8s0
     routes:
     - network: 10.3.0.0/24
       gateway: *mgmt_gateway
@@ -440,26 +413,20 @@ nodes:
     - 172.20.33.5/20
     bridge:
       interfaces:
-      - enp4s0f1
+      - enp6s0f0np0
   - interface: br_vxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
-      metric: 1024
+      metric: 100
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
     - 172.22.1.5/16
     bridge:
       interfaces:
-      - enp4s0f0
-    vlans:
-    - vlanId: *neutron_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
-    - vlanId: *octavia_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
+      - enp6s0f1np1
+    vlans: *vlan_config
 ## Worker R18
 - hostname: worker-r18.homelab.danmanners.com
   controlPlane: false
@@ -470,15 +437,19 @@ nodes:
   nameservers: *nameservers
   networkInterfaces:
   # Parent Interfaces set MTU to 8972
-  - interface: enp8s0
+  - interface: enp38s0
     dhcp: false
     ignore: false
     mtu: *linux_jumbo_frames
-  - interface: enp10s0f0
+  - interface: enp39s0
+    dhcp: false
+    ignore: true
+    mtu: *linux_jumbo_frames
+  - interface: enp36s0f0
     dhcp: false
     ignore: false
     mtu: *linux_jumbo_frames
-  - interface: enp10s0f1
+  - interface: enp36s0f1
     dhcp: false
     ignore: false
     mtu: *linux_jumbo_frames
@@ -492,14 +463,14 @@ nodes:
       stp:
         enabled: false
       interfaces:
-      - enp8s0
+      - enp38s0
     routes:
     - network: 10.3.0.0/24
       gateway: *mgmt_gateway
-    - network: 172.20.0.0/22
+    # - network: 172.20.0.0/22
     - network: 0.0.0.0/0
       gateway: *mgmt_gateway
-      metric: 1025
+      metric: 1024
   - interface: br_storage
     dhcp: false
     mtu: *linux_jumbo_frames
@@ -509,12 +480,12 @@ nodes:
       stp:
         enabled: false
       interfaces:
-      - enp10s0f1
+      - enp36s0f0
   - interface: br_vxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
-      metric: 1024
+      metric: 100
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -523,14 +494,8 @@ nodes:
       stp:
         enabled: false
       interfaces:
-      - enp10s0f0
-    vlans:
-    - vlanId: *neutron_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
-    - vlanId: *octavia_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
+      - enp36s0f1
+    vlans: *vlan_config
 ## Worker R14
 - hostname: worker-r14.homelab.danmanners.com
   controlPlane: false
@@ -588,7 +553,7 @@ nodes:
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
-      metric: 1024
+      metric: 100
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -598,13 +563,7 @@ nodes:
         enabled: false
       interfaces:
       - enp5s0f0
-    vlans:
-    - vlanId: *neutron_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
-    - vlanId: *octavia_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
+    vlans: *vlan_config
 ## Worker R12
 - hostname: worker-r12.homelab.danmanners.com
   controlPlane: false
@@ -664,7 +623,7 @@ nodes:
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
-      metric: 1024
+      metric: 100
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -674,13 +633,7 @@ nodes:
         enabled: false
       interfaces:
       - enp1s0f1
-    vlans:
-    - vlanId: *neutron_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
-    - vlanId: *octavia_vlan
-      dhcp: false
-      mtu: *linux_vlan_jumbo_frames
+    vlans: *vlan_config
 
 patches:
 - |-
@@ -705,6 +658,8 @@ patches:
       net.ipv4.tcp_rmem: 4096 87380 33554432 # 10Gb/s
       net.ipv4.tcp_wmem: 4096 65536 33554432 # 10Gb/s
       net.ipv4.tcp_window_scaling: 1         # 10Gb/s
+      net.ipv6.conf.all.forwarding=1
+
 - |-
   - op: add
     path: /machine/time
@@ -714,9 +669,24 @@ patches:
   - op: add
     path: /machine/features/hostDNS
     value:
-      enabled: true
-      resolveMemberNames: true
+      enabled: false
+      resolveMemberNames: tru
       forwardKubeDNSToHost: false
+- |-
+  - op: add
+    path: /machine/features
+    value:
+      stableHostname: true
+      diskQuotaSupport: true
+      rbac: true
+      kubePrism:
+        enabled: true
+        port: 7445
+- |-
+  - op: add
+    path: /cluster/proxy
+    value:
+      disabled: true
 
 worker:
   schematic:
@@ -736,21 +706,6 @@ worker:
       path: /machine/kubelet/nodeIP
       value:
         validSubnets: [172.20.0.0/22]
-  - |-
-    - op: add
-      path: /cluster/proxy
-      value:
-        disabled: true
-  - |-
-    - op: add
-      path: /machine/features
-      value:
-        stableHostname: true
-        diskQuotaSupport: true
-        rbac: true
-        kubePrism:
-          enabled: true
-          port: 7445
 
 controlPlane:
   schematic: {}
@@ -761,16 +716,6 @@ controlPlane:
       value:
         rotate-server-certificates: true
         rotate-certificates: true
-  - |-
-    - op: add
-      path: /machine/features
-      value:
-        stableHostname: true
-        diskQuotaSupport: true
-        rbac: true
-        kubePrism:
-          enabled: true
-          port: 7445
   - |-
     - op: add
       path: /cluster/coreDNS
@@ -794,11 +739,6 @@ controlPlane:
       path: /cluster/scheduler/extraArgs
       value:
         bind-address: 0.0.0.0
-  - |-
-    - op: add
-      path: /cluster/proxy
-      value:
-        disabled: true
   - |-
     - op: add
       path: /machine/kubelet/nodeIP
