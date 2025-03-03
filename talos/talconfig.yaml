@@ -82,11 +82,30 @@ nodes:
         enabled: false
       interfaces:
       - enp3s0f0np0
-  - interface: br_vxlan
+  - interface: bond_vxlan
+    dhcp: false
+    mtu: *linux_jumbo_frames
+    bond:
+      interfaces:
+      - enp3s0f1np1
+      mode: 802.3ad
+      lacpRate: fast
+      miimon: 100
+      updelay: 200
+      downdelay: 200
+    # Neutron VLAN Interfaces
+    vlans: &vlan_config
+      - vlanId: &neutron_vlan 501
+        dhcp: false
+        mtu: &linux_vlan_jumbo_frames 8900
+      - vlanId: &octavia_vlan 601
+        dhcp: false
+        mtu: *linux_vlan_jumbo_frames
+  - interface: brvxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
-      metric: 0
+      metric: 100
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -95,14 +114,8 @@ nodes:
       stp:
         enabled: false
       interfaces:
-      - enp3s0f1np1
-    vlans: &vlan_config
-      - vlanId: &neutron_vlan 501
-        dhcp: false
-        mtu: &linux_vlan_jumbo_frames 8900
-      - vlanId: &octavia_vlan 601
-        dhcp: false
-        mtu: *linux_vlan_jumbo_frames
+      - bond_vxlan
+    vlans: *vlan_config
   - interface: enp88s0
     dhcp: false
     ignore: true
@@ -156,7 +169,7 @@ nodes:
       - bond_storage
     routes:
     - network: 172.20.32.0/20
-  - interface: br_vxlan
+  - interface: brvxlan
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -241,7 +254,7 @@ nodes:
       - bond_storage
     routes:
     - network: 172.20.32.0/20
-  - interface: br_vxlan
+  - interface: brvxlan
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -328,7 +341,7 @@ nodes:
       - bond_storage
     routes:
     - network: 172.20.32.0/20
-  - interface: br_vxlan
+  - interface: brvxlan
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -414,7 +427,7 @@ nodes:
     bridge:
       interfaces:
       - enp6s0f0np0
-  - interface: br_vxlan
+  - interface: brvxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
@@ -470,7 +483,7 @@ nodes:
     # - network: 172.20.0.0/22
     - network: 0.0.0.0/0
       gateway: *mgmt_gateway
-      metric: 1024
+      metric: 256
   - interface: br_storage
     dhcp: false
     mtu: *linux_jumbo_frames
@@ -481,7 +494,19 @@ nodes:
         enabled: false
       interfaces:
       - enp36s0f0
-  - interface: br_vxlan
+  - interface: bond_vxlan
+    dhcp: false
+    mtu: *linux_jumbo_frames
+    bond:
+      interfaces:
+      - enp36s0f1
+      mode: 802.3ad
+      lacpRate: fast
+      miimon: 100
+      updelay: 200
+      downdelay: 200
+    vlans: *vlan_config
+  - interface: brvxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
@@ -494,7 +519,7 @@ nodes:
       stp:
         enabled: false
       interfaces:
-      - enp36s0f1
+      - bond_vxlan
     vlans: *vlan_config
 ## Worker R14
 - hostname: worker-r14.homelab.danmanners.com
@@ -549,7 +574,7 @@ nodes:
         enabled: false
       interfaces:
       - enp5s0f1
-  - interface: br_vxlan
+  - interface: brvxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
@@ -619,7 +644,7 @@ nodes:
         enabled: false
       interfaces:
       - enp1s0f0
-  - interface: br_vxlan
+  - interface: brvxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
@@ -658,7 +683,7 @@ patches:
       net.ipv4.tcp_rmem: 4096 87380 33554432 # 10Gb/s
       net.ipv4.tcp_wmem: 4096 65536 33554432 # 10Gb/s
       net.ipv4.tcp_window_scaling: 1         # 10Gb/s
-      net.ipv6.conf.all.forwarding=1
+      net.ipv6.conf.all.forwarding: 1
 
 - |-
   - op: add

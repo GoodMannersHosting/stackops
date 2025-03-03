@@ -3,6 +3,7 @@ bandwidthManager:
   enabled: true
   bbr: true
 bpf:
+  lbExternalClusterIP: true
   datapathMode: netkit
   masquerade: true
   preallocateMaps: true
@@ -16,7 +17,7 @@ cgroup:
 cluster:
   id: 1
   name: baremetal
-devices: br_vxlan
+devices: brvxlan
 egressGateway:
   enabled: false
 enableIPv4BIGTCP: true
