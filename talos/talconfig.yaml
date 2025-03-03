@@ -101,7 +101,7 @@ nodes:
       - vlanId: &octavia_vlan 601
         dhcp: false
         mtu: *linux_vlan_jumbo_frames
-  - interface: brvxlan
+  - interface: br.vxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
@@ -169,7 +169,7 @@ nodes:
       - bond_storage
     routes:
     - network: 172.20.32.0/20
-  - interface: brvxlan
+  - interface: br.vxlan
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -254,7 +254,7 @@ nodes:
       - bond_storage
     routes:
     - network: 172.20.32.0/20
-  - interface: brvxlan
+  - interface: br.vxlan
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -341,7 +341,7 @@ nodes:
       - bond_storage
     routes:
     - network: 172.20.32.0/20
-  - interface: brvxlan
+  - interface: br.vxlan
     dhcp: false
     mtu: *linux_jumbo_frames
     addresses:
@@ -427,7 +427,7 @@ nodes:
     bridge:
       interfaces:
       - enp6s0f0np0
-  - interface: brvxlan
+  - interface: br.vxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
@@ -506,7 +506,7 @@ nodes:
       updelay: 200
       downdelay: 200
     vlans: *vlan_config
-  - interface: brvxlan
+  - interface: br.vxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
@@ -574,7 +574,7 @@ nodes:
         enabled: false
       interfaces:
       - enp5s0f1
-  - interface: brvxlan
+  - interface: br.vxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
@@ -644,7 +644,7 @@ nodes:
         enabled: false
       interfaces:
       - enp1s0f0
-  - interface: brvxlan
+  - interface: br.vxlan
     routes:
     - network: 0.0.0.0/0
       gateway: 172.22.0.1
