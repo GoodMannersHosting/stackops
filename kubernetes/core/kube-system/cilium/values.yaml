@@ -3,8 +3,7 @@ bandwidthManager:
   enabled: true
   bbr: true
 bpf:
-  masquerade: false
-  # hostLegacyRouting: true
+  masquerade: false #true, but later
   lbExternalClusterIP: true
   datapathMode: netkit
   preallocateMaps: true

@@ -376,7 +376,7 @@ nodes:
 # Worker Nodes
 - hostname: worker-r22.homelab.danmanners.com
   controlPlane: false
-  installDisk: /dev/nvme0n1
+  installDisk: /dev/nvme1n1
   schematic: &amdHypervisor
     customization:
       systemExtensions:
@@ -412,6 +412,8 @@ nodes:
     addresses:
     - 172.20.1.5/22
     bridge:
+      stp:
+        enabled: false
       interfaces:
       - enp8s0
     routes:
@@ -427,6 +429,8 @@ nodes:
     addresses:
     - 172.20.33.5/20
     bridge:
+      stp:
+        enabled: false
       interfaces:
       - enp6s0f0np0
   - interface: br.vxlan
@@ -439,6 +443,8 @@ nodes:
     addresses:
     - 172.22.1.5/16
     bridge:
+      stp:
+        enabled: false
       interfaces:
       - enp6s0f1np1
     vlans: *vlan_config
@@ -509,11 +515,10 @@ nodes:
         enabled: false
       interfaces:
       - enp36s0f1
-      # - bond_vxlan
     vlans: *vlan_config
 - hostname: worker-r14.homelab.danmanners.com
   controlPlane: false
-  installDisk: /dev/sde
+  installDisk: /dev/nvme0n1
   schematic:
     customization:
       systemExtensions:
@@ -550,10 +555,10 @@ nodes:
         enabled: false
       interfaces:
       - enp8s0
-      # routes:
-      # - network: 10.3.0.0/24
-      #   gateway: *mgmt_gateway
-      #   metric: 100
+    routes:
+    - network: 10.3.0.0/24
+      gateway: *mgmt_gateway
+      metric: 100
       # - network: 0.0.0.0/0
       #   gateway: *mgmt_gateway
       #   metric: 1024
@@ -584,27 +589,26 @@ nodes:
     vlans: *vlan_config
 - hostname: worker-r12.homelab.danmanners.com
   controlPlane: false
-  installDisk: /dev/nvme0n1
-  schematic:
-    customization:
-      extraKernelArgs:
-      - ixgbe.allow_unsupported_sfp=1
-      systemExtensions:
-        officialExtensions: *intelExtensions
+  installDisk: /dev/nvme3n1
+  schematic: *amdHypervisor
   ipAddress: 172.22.1.8
   disableSearchDomain: true
   nameservers: *nameservers
   networkInterfaces:
   # Parent Interfaces set MTU to 8972
-  - interface: enp5s0
+  - interface: enp38s0
     dhcp: false
     ignore: false
     mtu: *linux_jumbo_frames
-  - interface: enp1s0f0
+  - interface: enp39s0
+    dhcp: false
+    ignore: true
+    mtu: *linux_jumbo_frames
+  - interface: enp36s0f0
     dhcp: false
     ignore: false
     mtu: *linux_jumbo_frames
-  - interface: enp1s0f1
+  - interface: enp36s0f1
     dhcp: false
     ignore: false
     mtu: *linux_jumbo_frames
@@ -618,11 +622,11 @@ nodes:
       stp:
         enabled: false
       interfaces:
-      - enp5s0
-      # routes:
-      # - network: 10.3.0.0/24
-      #   gateway: *mgmt_gateway
-      #   metric: 100
+      - enp38s0
+    routes:
+    - network: 10.3.0.0/24
+      gateway: *mgmt_gateway
+      metric: 100
       # - network: 0.0.0.0/0
       #   gateway: *mgmt_gateway
       #   metric: 1024
@@ -635,7 +639,7 @@ nodes:
       stp:
         enabled: false
       interfaces:
-      - enp1s0f0
+      - enp36s0f0
   - interface: br.vxlan
     routes:
     - network: 0.0.0.0/0
@@ -649,7 +653,7 @@ nodes:
       stp:
         enabled: false
       interfaces:
-      - enp1s0f1
+      - enp36s0f1
     vlans: *vlan_config
 
 patches:
@@ -696,7 +700,7 @@ patches:
   - op: add
     path: /machine/features/hostDNS
     value:
-      enabled: false
+      enabled: true
       resolveMemberNames: true
       forwardKubeDNSToHost: false
 - |-
