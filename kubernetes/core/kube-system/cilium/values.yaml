@@ -3,9 +3,10 @@ bandwidthManager:
   enabled: true
   bbr: true
 bpf:
+  masquerade: false
+  # hostLegacyRouting: true
   lbExternalClusterIP: true
   datapathMode: netkit
-  masquerade: true
   preallocateMaps: true
   tproxy: true
 bgpControlPlane:
@@ -33,7 +34,7 @@ ipam:
     clusterPoolIPv4PodCIDRList: [ "10.244.0.0/16" ]
     clusterPoolIPv4PodCIDRMaskSize: 23
 ipv4NativeRoutingCIDR: 10.244.0.0/16
-k8sServiceHost: 127.0.0.1
+k8sServiceHost: localhost
 k8sServicePort: 7445
 kubeProxyReplacement: true
 kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
@@ -69,12 +70,12 @@ securityContext:
     - IPC_LOCK
     - SYS_ADMIN
     - SYS_RESOURCE
-    - PERFMON
-    - BPF
     - DAC_OVERRIDE
     - FOWNER
     - SETGID
     - SETUID
+    - PERFMON
+    - BPF
     cleanCiliumState:
     - NET_ADMIN
     - SYS_ADMIN

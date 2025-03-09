@@ -9,35 +9,35 @@ service:
 serviceAccount:
   create: true
 
-servers:
-- zones:
-  - zone: .
-    scheme: dns://
-    use_tcp: true
-  port: 53
-  plugins:
-  - name: log
-  - name: debug
-  - name: errors
-  - name: health
-    configBlock: |-
-      lameduck 5s
-  - name: ready
-  - name: kubernetes
-    parameters: cluster.local in-addr.arpa ip6.arpa
-    configBlock: |-
-      pods insecure
-      fallthrough in-addr.arpa ip6.arpa
-      ttl 30
-  - name: prometheus
-    parameters: 0.0.0.0:9153
-  - name: forward
-    parameters: . /etc/resolv.conf
-  - name: cache
-    parameters: 30
-  - name: loop
-  - name: reload
-  - name: loadbalance
+# servers:
+# - zones:
+#   - zone: .
+#     scheme: dns://
+#     use_tcp: true
+#   port: 53
+#   plugins:
+#   - name: log
+#   - name: debug
+#   - name: errors
+#   - name: health
+#     configBlock: |-
+#       lameduck 5s
+#   - name: ready
+#   - name: kubernetes
+#     parameters: cluster.local in-addr.arpa ip6.arpa
+#     configBlock: |-
+#       pods insecure
+#       fallthrough in-addr.arpa ip6.arpa
+#       ttl 30
+#   - name: prometheus
+#     parameters: 0.0.0.0:9153
+#   - name: forward
+#     parameters: . /etc/resolv.conf
+#   - name: cache
+#     parameters: 30
+#   - name: loop
+#   - name: reload
+#   - name: loadbalance
 
 tolerations:
 - key: CriticalAddonsOnly
@@ -52,3 +52,20 @@ topologySpreadConstraints:
   labelSelector:
     matchLabels:
       app.kubernetes.io/instance: coredns
+
+# To use the livenessProbe, the health plugin needs to be enabled in CoreDNS' server config
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 5
+  successThreshold: 1
+# To use the readinessProbe, the ready plugin needs to be enabled in CoreDNS' server config
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 5
+  successThreshold: 1
