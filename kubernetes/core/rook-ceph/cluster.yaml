@@ -80,7 +80,7 @@ cephClusterSpec:
 cephBlockPools:
 - name: &nvme nvme
   spec:
-    deviceClass: nvme
+    deviceClass: ssd
     failureDomain: osd
     replicated:
       size: 1
@@ -120,6 +120,7 @@ cephFileSystems:
     enabled: true
     name: *cfs
     pool: hdd
+    isDefault: false
     reclaimPolicy: Delete
     allowVolumeExpansion: true
     volumeBindingMode: Immediate
